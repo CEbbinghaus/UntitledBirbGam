@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 199333}
   - component: {fileID: 199332}
   - component: {fileID: 199331}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 65401150}
   - component: {fileID: 65401149}
   - component: {fileID: 65401148}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 132687458}
   - component: {fileID: 132687457}
   - component: {fileID: 132687456}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trunk (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 284744513}
   - component: {fileID: 284744512}
   - component: {fileID: 284744511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -509,7 +509,7 @@ GameObject:
   - component: {fileID: 333021505}
   - component: {fileID: 333021504}
   - component: {fileID: 333021503}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trunk (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -604,7 +604,7 @@ GameObject:
   - component: {fileID: 362259637}
   - component: {fileID: 362259636}
   - component: {fileID: 362259635}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -981,7 +981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  turnSpeed: 30
+  turnSpeed: 45
 --- !u!54 &625423025
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1010,7 +1010,7 @@ GameObject:
   - component: {fileID: 810328237}
   - component: {fileID: 810328236}
   - component: {fileID: 810328235}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trunk (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1105,7 +1105,7 @@ GameObject:
   - component: {fileID: 854190412}
   - component: {fileID: 854190411}
   - component: {fileID: 854190410}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trunk (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1200,7 +1200,7 @@ GameObject:
   - component: {fileID: 1038533277}
   - component: {fileID: 1038533276}
   - component: {fileID: 1038533275}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1387,7 +1387,7 @@ GameObject:
   - component: {fileID: 1288423935}
   - component: {fileID: 1288423934}
   - component: {fileID: 1288423933}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1687,7 +1687,7 @@ GameObject:
   - component: {fileID: 1737404167}
   - component: {fileID: 1737404166}
   - component: {fileID: 1737404165}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trunk (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1801,7 +1801,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heldSeeds: 0
-  initialFoodCount: 20
+  initialFoodCount: 100
   seedPrefab: {fileID: 130493021734992999, guid: 2697dd41fcd825646962aabef360a6df,
     type: 3}
 --- !u!65 &1916712883
@@ -1936,7 +1936,7 @@ GameObject:
   - component: {fileID: 1973357816}
   - component: {fileID: 1973357815}
   - component: {fileID: 1973357814}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
