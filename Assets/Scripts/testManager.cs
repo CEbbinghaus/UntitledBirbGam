@@ -26,7 +26,7 @@ public class testManager : MonoBehaviour
         for (int i = 0; i < initialFoodCount; i++)
         {
             Vector3 randPoint;
-            // Gets a random point to move the CP to. Repeats if the point found is invalid
+            // Gets a random point. Repeats if there is food or an obstacle too close
             do
             {
                 randPoint = new Vector3(
