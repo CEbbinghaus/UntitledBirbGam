@@ -4,10 +4,19 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+	/// <summary>
+	/// The directions the player is moving the character.
+	/// </summary>
 	private Vector3 m_PlayerMovement = Vector3.zero;
 
+	/// <summary>
+	/// The Rigidbody of the player character.
+	/// </summary>
 	private Rigidbody m_Rigid = null;
 
+	/// <summary>
+	/// The speed of the player character.
+	/// </summary>
 	public float m_Speed = 3;
 
 	//private Transform m_MainCamera = null;
