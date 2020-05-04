@@ -5,45 +5,67 @@ using UnityEngine.AI;
 
 public class BidgeBehaviour : MonoBehaviour
 {
+	/// <summary>
+	/// The transform of the player.
+	/// </summary>
 	public Transform m_PlayerCharacterTransform = null;
 
+	/// <summary>
+	/// The Nav Mesh Agent
+	/// </summary>
 	private NavMeshAgent m_Agent = null;
 
+	/// <summary>
+	/// A path on the nav mesh.
+	/// </summary>
 	private NavMeshPath m_NavPath = null;
 
+	/// <summary>
+	/// Stores information of a point on the nav mesh.
+	/// </summary>
 	private NavMeshHit m_NavHit = new NavMeshHit();
 
-	private Vector3 m_WanderDirection = Vector3.zero;
+	/// <summary>
+	/// Points on the map for the AI to wander to when it can't reach the player.
+	/// </summary>
+	public Transform[] m_WanderPoints;
 
-	private bool m_CanReachPlayer = false;
-
-    // Start is called before the first frame update
+    /// <summary>
+	/// On startup.
+	/// </summary>
     void Awake()
     {
 		m_Agent = GetComponent<NavMeshAgent>();
 		m_NavPath = new NavMeshPath();
+
+		Wander();
     }
 
     // Update is called once per frame
     void Update()
     {
+		// If Bidge can't find a path to the player character, wander to a point.
 		if (!m_Agent.CalculatePath(m_PlayerCharacterTransform.position, m_NavPath))
 		{
-			Debug.Log("Couldn't find path!");
-			Wander();
+			if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+				m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
 		}
+		// Else, move to the player.
 		else
-		{
 			m_Agent.destination = m_PlayerCharacterTransform.position;
-		}
     }
 
 	private void Wander()
 	{
-		m_WanderDirection = Random.insideUnitSphere * m_Agent.radius;
-		m_WanderDirection += transform.position;
+		// Make sure Bidge finds a random point on the navmesh to wander to.
+		while (true)
+		{
+			// Keep trying to find a point until it finds a valid one.
+			if (NavMesh.SamplePosition(transform.position, out m_NavHit, 100.0f, NavMesh.AllAreas))
+				break;
+		}
 
-		NavMesh.SamplePosition(m_WanderDirection, out m_NavHit, m_Agent.radius, -1);
+		// Set the destination to the random point.
 		m_Agent.destination = m_NavHit.position;
 	}
 }
