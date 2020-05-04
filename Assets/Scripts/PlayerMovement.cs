@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
 		m_PlayerMovement = Vector3.zero;
 
 		m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
-		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");		
+		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
     }
 
 	private void FixedUpdate()
