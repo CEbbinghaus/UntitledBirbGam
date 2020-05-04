@@ -8,7 +8,8 @@ public class testBird : MonoBehaviour
     public float turnSpeed;
     void FixedUpdate()
     {
-        transform.position += transform.forward * moveSpeed * Time.fixedDeltaTime;
+        Camera.main.transform.position = new Vector3(transform.position.x, 26, transform.position.z);
         transform.Rotate(0, Input.GetAxis("Horizontal") * turnSpeed * Time.fixedDeltaTime, 0);
+        transform.position += transform.forward * moveSpeed * Time.fixedDeltaTime;
     }
 }
