@@ -10,6 +10,7 @@ public class testManager : MonoBehaviour
 
     Bounds spawnArea;
 
+    public float checkDistance = 1f;
     public int initialFoodCount;
     public GameObject seedPrefab;
 
@@ -25,7 +26,7 @@ public class testManager : MonoBehaviour
         for (int i = 0; i < initialFoodCount; i++)
         {
             Vector3 randPoint;
-            // Gets a random point to move the CP to. Repeats if the point found is invalid
+            // Gets a random point. Repeats if there is food or an obstacle too close
             do
             {
                 randPoint = new Vector3(
@@ -33,7 +34,7 @@ public class testManager : MonoBehaviour
                     transform.position.y,
                     Random.Range(spawnArea.min.z, spawnArea.max.z)
                 );
-            } while (Physics.CheckSphere(randPoint, 1f, 1 << 8)); // Invalid check
+            } while (Physics.CheckSphere(randPoint, checkDistance, 1 << 8)); // Invalid check
             Instantiate(seedPrefab, randPoint, Quaternion.identity);
         }
     }
