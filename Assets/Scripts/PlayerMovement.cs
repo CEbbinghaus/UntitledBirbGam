@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerManager))]
 public class PlayerMovement : MonoBehaviour
 {
 	/// <summary>
@@ -19,30 +20,35 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	public float m_Speed = 3;
 
-	//private Transform m_MainCamera = null;
-	//
-	//private float m_MainCameraYPos = 0.0f;
-
+	/// <summary>
+	/// On startup.
+	/// </summary>
     void Awake()
     {
+		// Get the rigidbody.
 		m_Rigid = GetComponent<Rigidbody>();
-
-		//m_MainCamera = Camera.main.transform;
-		//m_MainCameraYPos = m_MainCamera.position.y;
     }
 
-    // Update is called once per frame
+    /// <summary>
+	/// Update.
+	/// </summary>
     void Update()
     {
+		// Reset player inputs vector.
 		m_PlayerMovement = Vector3.zero;
 
+		// Get the inputs.
 		m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
-		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");		
+		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
     }
 
+	/// <summary>
+	/// Physics update.
+	/// </summary>
 	private void FixedUpdate()
 	{
+		// Add force to the player to move them.
+		// Speed is multiplied by 100 for significant movement.
 		m_Rigid.AddForce((m_PlayerMovement * (m_Speed * 100)) * Time.deltaTime, ForceMode.Impulse);
-		//m_MainCamera.position = new Vector3(transform.position.x, m_MainCameraYPos, transform.position.z);
 	}
 }
