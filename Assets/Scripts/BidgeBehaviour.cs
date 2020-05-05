@@ -21,11 +21,6 @@ public class BidgeBehaviour : MonoBehaviour
 	private NavMeshPath m_NavPath = null;
 
 	/// <summary>
-	/// Stores information of a point on the nav mesh.
-	/// </summary>
-	private NavMeshHit m_NavHit = new NavMeshHit();
-
-	/// <summary>
 	/// Points on the map for the AI to wander to when it can't reach the player.
 	/// </summary>
 	public Transform[] m_WanderPoints;
