@@ -22,23 +22,23 @@ public class testManager : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
-    {
-        for (int i = 0; i < initialFoodCount; i++)
-        {
-            Vector3 randPoint;
-            // Gets a random point. Repeats if there is food or an obstacle too close
-            do
-            {
-                randPoint = new Vector3(
-                    Random.Range(spawnArea.min.x, spawnArea.max.x),
-                    transform.position.y,
-                    Random.Range(spawnArea.min.z, spawnArea.max.z)
-                );
-            } while (Physics.CheckSphere(randPoint, checkDistanceFood, 1 << 8) || Physics.CheckSphere(randPoint, checkDistanceObstacles, 1 << 9)); // Invalid check
-            Instantiate(seedPrefab, randPoint, Quaternion.identity);
-        }
-    }
+    //void Start()
+    //{
+    //    for (int i = 0; i < initialFoodCount; i++)
+    //    {
+    //        Vector3 randPoint;
+    //        // Gets a random point. Repeats if there is food or an obstacle too close
+    //        do
+    //        {
+    //            randPoint = new Vector3(
+    //                Random.Range(spawnArea.min.x, spawnArea.max.x),
+    //                transform.position.y,
+    //                Random.Range(spawnArea.min.z, spawnArea.max.z)
+    //            );
+    //        } while (Physics.CheckSphere(randPoint, checkDistanceFood, 1 << 8) || Physics.CheckSphere(randPoint, checkDistanceObstacles, 1 << 9)); // Invalid check
+    //        Instantiate(seedPrefab, randPoint, Quaternion.identity);
+    //    }
+    //}
 
     // Update is called once per frame
     void Update()
