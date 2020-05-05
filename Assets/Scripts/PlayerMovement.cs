@@ -64,17 +64,6 @@ public class PlayerMovement : MonoBehaviour
 	private void FixedUpdate()
 	{
 		m_Rigid.velocity = transform.forward * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier)) * Time.deltaTime;
-
-		// Add force to the player to move them.
-		// Speed is multiplied by 100 for significant movement.
-		//m_Rigid.AddForce(
-		//	(m_PlayerMovement * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.deltaTime,
-		//	ForceMode.Impulse);
-		//
-		//if (m_Rigid.velocity.magnitude > m_MaxSpeed)
-		//{
-		//	m_Rigid.velocity = Vector3.ClampMagnitude(m_Rigid.velocity, m_MaxSpeed);
-		//}
 	}
 	
 	/// <summary>
