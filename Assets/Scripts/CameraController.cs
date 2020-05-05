@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
 
     public float minDistance = 5f;
     public float buffer = 0.5f;
+    public float snap = 2;
 
     Camera camera;
     // Start is called before the first frame update
@@ -20,7 +21,7 @@ public class CameraController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update(){
+    void FixedUpdate(){
         if(target == null)return;
 
 
@@ -38,6 +39,7 @@ public class CameraController : MonoBehaviour
             if(Mathf.Abs(dist.z) > maxSize.y)
                 maxSize.y = Mathf.Abs(dist.z);
         }
+
         maxSize *= (2 + buffer);
         float height = maxSize.y;
         if(maxSize.x > maxSize.y * camera.aspect){
@@ -45,7 +47,7 @@ public class CameraController : MonoBehaviour
         }
    
         if(height <= 0){
-            height = 2.0f * transform.position.y * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            height = 2.0f * minDistance * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
         }
 
 
@@ -54,7 +56,7 @@ public class CameraController : MonoBehaviour
         if(distance < minDistance)
             distance = minDistance;
 
-        transform.position = new Vector3(target.transform.position.x, distance, target.transform.position.z);
+        transform.position = Vector3.Lerp(transform.position, new Vector3(target.position.x, distance, target.position.z), Time.deltaTime * snap);
 
 
 
