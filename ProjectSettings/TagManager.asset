@@ -5,7 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Nest
-  - Food
+  - Seed
+  - Sandwich
+  - Bidge
   layers:
   - Default
   - TransparentFX

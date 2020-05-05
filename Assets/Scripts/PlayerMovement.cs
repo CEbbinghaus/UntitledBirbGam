@@ -53,7 +53,9 @@ public class PlayerMovement : MonoBehaviour
 		// Get the inputs.
 		m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
 		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
-		transform.LookAt(transform.position + m_PlayerMovement, Vector3.up);
+
+		if (m_PlayerMovement.magnitude > 0.0f)
+			transform.LookAt(transform.position + m_PlayerMovement, Vector3.up);
     }
 
 	/// <summary>
@@ -61,16 +63,13 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	private void FixedUpdate()
 	{
-		// Make sure the character moves only when there is input from the player.
-		if (Vector3.Magnitude(m_PlayerMovement) > 0.0f)
-		{
-			// Add force to the player to move them.
-			// Speed is multiplied by 100 for significant movement.
-			m_Rigid.AddForce((m_PlayerMovement * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.deltaTime, ForceMode.Impulse);
-			Debug.Log(FoodEncumbrance() * m_EncumbranceModifier);
-		}
+		m_Rigid.velocity = transform.forward * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier)) * Time.deltaTime;
 	}
-
+	
+	/// <summary>
+	/// Calculate food encumbrance.
+	/// </summary>
+	/// <returns>Normalised food collected.</returns>
 	public float FoodEncumbrance()
 	{
 		return (float)m_PM.GetFoodCollected() / m_PM.m_MaxFoodCollect;
