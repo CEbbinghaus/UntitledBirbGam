@@ -10,7 +10,15 @@ public class PlayerManager : MonoBehaviour
 	/// </summary>
 	private int m_FoodCollected = 0;
 
+	/// <summary>
+	/// The maximum amount of food the player can have.
+	/// </summary>
 	public int m_MaxFoodCollect = 200;
+
+	/// <summary>
+	/// How much sandwiches are worth.
+	/// </summary>
+	public int m_SandwichPoints = 100;
 
 	/// <summary>
 	/// The player's current score.
@@ -28,17 +36,38 @@ public class PlayerManager : MonoBehaviour
 	public Text m_FoodCollectedText = null;
 
 	/// <summary>
+	/// Player lives.
+	/// </summary>
+	public int m_Lives = 3;
+
+	/// <summary>
+	/// The text object that displays the player's lives.
+	/// </summary>
+	public Text m_LivesText = null;
+
+	private void Awake()
+	{
+		m_LivesText.text = m_Lives.ToString();
+	}
+
+	/// <summary>
 	/// When the player collides with a trigger (food or the nest).
 	/// </summary>
 	/// <param name="other">The object the player collided with.</param>
 	private void OnTriggerEnter(Collider other)
 	{
 		// Increment the food collected by 1.
-		if (other.tag == "Food")
+		if (other.tag == "Seed")
 		{
 			m_FoodCollected++;
 			other.gameObject.SetActive(false);
-			//m_FoodCollectedText.text = m_FoodCollected.ToString();
+			m_FoodCollectedText.text = m_FoodCollected.ToString();
+		}
+		else if (other.tag == "Sandwich")
+		{
+			m_FoodCollected += m_SandwichPoints;
+			other.gameObject.SetActive(false);
+			m_FoodCollectedText.text = m_FoodCollected.ToString();
 		}
 		// Increase the score by the amount of food the player was holding and update scoreboard.
 		else if (other.tag == "Nest")
@@ -48,6 +77,15 @@ public class PlayerManager : MonoBehaviour
 			// Reset food collected.
 			m_FoodCollected = 0;
 			m_FoodCollectedText.text = m_FoodCollected.ToString();
+		}
+	}
+
+	private void OnCollisionEnter(Collision collision)
+	{
+		if (collision.gameObject.tag == "Bidge")
+		{
+			m_Lives--;
+			m_LivesText.text = m_Lives.ToString();
 		}
 	}
 
