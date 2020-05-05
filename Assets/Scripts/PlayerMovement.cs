@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerManager))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
 	/// <summary>
@@ -19,9 +20,15 @@ public class PlayerMovement : MonoBehaviour
 	/// The speed of the player character.
 	/// </summary>
 	public float m_Speed = 3;
-
+	
+	/// <summary>
+	/// The player manager on the player character, for getting the food collected.
+	/// </summary>
 	private PlayerManager m_PM;
 
+	/// <summary>
+	/// How much encumbrance affects the player's movement.
+	/// </summary>
 	public float m_EncumbranceModifier = 10.0f;
 
 	/// <summary>
@@ -59,9 +66,13 @@ public class PlayerMovement : MonoBehaviour
 		{
 			// Add force to the player to move them.
 			// Speed is multiplied by 100 for significant movement.
-			m_Rigid.AddForce((m_PlayerMovement * (m_Speed * 100)) * Time.deltaTime, ForceMode.Impulse);
-			m_Rigid.AddForce(-transform.forward * (m_PM.GetFoodCollected() * m_EncumbranceModifier));
-			//Debug.Log(m_Rigid.velocity);
+			m_Rigid.AddForce((m_PlayerMovement * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.deltaTime, ForceMode.Impulse);
+			Debug.Log(FoodEncumbrance() * m_EncumbranceModifier);
 		}
+	}
+
+	public float FoodEncumbrance()
+	{
+		return (float)m_PM.GetFoodCollected() / m_PM.m_MaxFoodCollect;
 	}
 }

@@ -10,6 +10,8 @@ public class PlayerManager : MonoBehaviour
 	/// </summary>
 	private int m_FoodCollected = 0;
 
+	public int m_MaxFoodCollect = 200;
+
 	/// <summary>
 	/// The player's current score.
 	/// </summary>
@@ -25,6 +27,10 @@ public class PlayerManager : MonoBehaviour
 	/// </summary>
 	public Text m_FoodCollectedText = null;
 
+	/// <summary>
+	/// When the player collides with a trigger (food or the nest).
+	/// </summary>
+	/// <param name="other">The object the player collided with.</param>
 	private void OnTriggerEnter(Collider other)
 	{
 		// Increment the food collected by 1.
@@ -45,6 +51,10 @@ public class PlayerManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Get the food the player has collected.
+	/// </summary>
+	/// <returns></returns>
 	public int GetFoodCollected()
 	{
 		return m_FoodCollected;
