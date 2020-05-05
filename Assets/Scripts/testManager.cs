@@ -10,7 +10,8 @@ public class testManager : MonoBehaviour
 
     Bounds spawnArea;
 
-    public float checkDistance = 1f;
+    public float checkDistanceFood = 1f;
+    public float checkDistanceObstacles = 0.5f;
     public int initialFoodCount;
     public GameObject seedPrefab;
 
@@ -34,7 +35,7 @@ public class testManager : MonoBehaviour
                     transform.position.y,
                     Random.Range(spawnArea.min.z, spawnArea.max.z)
                 );
-            } while (Physics.CheckSphere(randPoint, checkDistance, 1 << 8)); // Invalid check
+            } while (Physics.CheckSphere(randPoint, checkDistanceFood, 1 << 8) || Physics.CheckSphere(randPoint, checkDistanceObstacles, 1 << 9)); // Invalid check
             Instantiate(seedPrefab, randPoint, Quaternion.identity);
         }
     }
