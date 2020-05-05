@@ -37,8 +37,6 @@ public class BidgeBehaviour : MonoBehaviour
     {
 		m_Agent = GetComponent<NavMeshAgent>();
 		m_NavPath = new NavMeshPath();
-
-		Wander();
     }
 
     // Update is called once per frame
@@ -54,18 +52,4 @@ public class BidgeBehaviour : MonoBehaviour
 		else
 			m_Agent.destination = m_PlayerCharacterTransform.position;
     }
-
-	private void Wander()
-	{
-		// Make sure Bidge finds a random point on the navmesh to wander to.
-		while (true)
-		{
-			// Keep trying to find a point until it finds a valid one.
-			if (NavMesh.SamplePosition(transform.position, out m_NavHit, 100.0f, NavMesh.AllAreas))
-				break;
-		}
-
-		// Set the destination to the random point.
-		m_Agent.destination = m_NavHit.position;
-	}
 }

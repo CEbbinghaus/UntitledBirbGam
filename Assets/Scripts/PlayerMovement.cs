@@ -20,6 +20,10 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	public float m_Speed = 3;
 
+	private PlayerManager m_PM;
+
+	public float m_EncumbranceModifier = 10.0f;
+
 	/// <summary>
 	/// On startup.
 	/// </summary>
@@ -27,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
     {
 		// Get the rigidbody.
 		m_Rigid = GetComponent<Rigidbody>();
+
+		m_PM = GetComponent<PlayerManager>();
     }
 
     /// <summary>
@@ -40,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
 		// Get the inputs.
 		m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
 		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
+		transform.LookAt(transform.position + m_PlayerMovement, Vector3.up);
     }
 
 	/// <summary>
@@ -47,8 +54,14 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	private void FixedUpdate()
 	{
-		// Add force to the player to move them.
-		// Speed is multiplied by 100 for significant movement.
-		m_Rigid.AddForce((m_PlayerMovement * (m_Speed * 100)) * Time.deltaTime, ForceMode.Impulse);
+		// Make sure the character moves only when there is input from the player.
+		if (Vector3.Magnitude(m_PlayerMovement) > 0.0f)
+		{
+			// Add force to the player to move them.
+			// Speed is multiplied by 100 for significant movement.
+			m_Rigid.AddForce((m_PlayerMovement * (m_Speed * 100)) * Time.deltaTime, ForceMode.Impulse);
+			m_Rigid.AddForce(-transform.forward * (m_PM.GetFoodCollected() * m_EncumbranceModifier));
+			//Debug.Log(m_Rigid.velocity);
+		}
 	}
 }

@@ -20,6 +20,11 @@ public class PlayerManager : MonoBehaviour
 	/// </summary>
 	public Text m_ScoreText = null;
 
+	/// <summary>
+	/// The text object that displays the amount the player is carrying.
+	/// </summary>
+	public Text m_FoodCollectedText = null;
+
 	private void OnTriggerEnter(Collider other)
 	{
 		// Increment the food collected by 1.
@@ -27,14 +32,21 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_FoodCollected++;
 			other.gameObject.SetActive(false);
+			//m_FoodCollectedText.text = m_FoodCollected.ToString();
 		}
 		// Increase the score by the amount of food the player was holding and update scoreboard.
 		else if (other.tag == "Nest")
 		{
 			m_Score += m_FoodCollected;
+			m_ScoreText.text = m_Score.ToString();
 			// Reset food collected.
 			m_FoodCollected = 0;
-			m_ScoreText.text = m_Score.ToString();
+			m_FoodCollectedText.text = m_FoodCollected.ToString();
 		}
+	}
+
+	public int GetFoodCollected()
+	{
+		return m_FoodCollected;
 	}
 }
