@@ -99,7 +99,7 @@ public class FrisbeeMovement : MonoBehaviour
 				m_Collider.enabled = true;
 				m_Rigid.useGravity = false;
 
-				transform.position = m_MainCamera.ViewportToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
+				transform.position = m_MainCamera.ScreenToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
 
 				// Don't spawn in an object.
 				while (Physics.CheckSphere(transform.position, 1))
