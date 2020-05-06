@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -45,10 +46,14 @@ public class PlayerManager : MonoBehaviour
 	/// </summary>
 	public Text m_LivesText = null;
 
+	public GameObject m_EndScreen = null;
+
+	public TextMeshProUGUI m_FinalScore = null;
+
 	private void Awake()
-	{	
 		if(m_LivesText)
-			m_LivesText.text = m_Lives.ToString();
+		    m_LivesText.text = m_Lives.ToString();
+		Time.timeScale = 1.0f;
 	}
 
 	/// <summary>
@@ -97,10 +102,18 @@ public class PlayerManager : MonoBehaviour
 			m_Lives--;
 			m_LivesText.text = m_Lives.ToString();
 		}
+		// Player collided with an object, lose all food collected.
+		else
+		{
+			m_FoodCollected = 0;
+			m_FoodCollectedText.text = m_FoodCollected.ToString();
+		}
 
 		if (m_Lives <= 0)
 		{
-			// Player has no lives, put up end screen.
+			m_EndScreen.SetActive(true);
+			Time.timeScale = 0.0f;
+			m_FinalScore.text = m_Score.ToString();
 		}
 	}
 
