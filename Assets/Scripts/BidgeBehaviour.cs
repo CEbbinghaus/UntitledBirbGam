@@ -40,7 +40,6 @@ public class BidgeBehaviour : MonoBehaviour
     void Update()
     {
 		Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position), out m_VisionRaycastHit);
-		Debug.Log(m_VisionRaycastHit.rigidbody.tag);
 		// If Bidge can find a path to the player character and can see them, chase them.
 		if (m_VisionRaycastHit.rigidbody.tag == "Player")
 		{
