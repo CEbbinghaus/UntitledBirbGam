@@ -60,6 +60,12 @@ public class PlayerManager : MonoBehaviour
 
 	int seeds, sandwiches;
 
+
+	void Awake(){
+		Time.timeScale = 1;
+		Spawning.RefreshSpawned();
+	}
+
 	/// <summary>
 	/// When the player collides with a trigger (food or the nest).
 	/// </summary>
@@ -113,6 +119,9 @@ public class PlayerManager : MonoBehaviour
 			m_Score += m_FoodCollected;
 			if(m_FoodCollected > 0)
 				AudioManager.Emit(AudioManager.Event.Score);
+
+			Spawning.RefreshSpawned();
+
 			m_ScoreText.Value = m_Score;
 			// Reset food collected.
 			m_FoodCollected = 0;
@@ -131,7 +140,7 @@ public class PlayerManager : MonoBehaviour
 
 
 			// Find an object that spawns food and refresh spawns when the player reaches the nest.
-			FindObjectOfType<Spawning>().RefreshSpawned();
+			// FindObjectOfType<Spawning>().RefreshSpawned();
 		}
 	}
 
@@ -150,8 +159,10 @@ public class PlayerManager : MonoBehaviour
 		// Player collided with the frisbee, which is active for collision.
 		else if (collision.gameObject.tag == "Frisbee" && collision.gameObject.GetComponent<FrisbeeMovement>().GetFired() == true)
 		{
-			m_Lives--;
-			m_LifeGraphics[m_Lives].enabled = false;
+			if(m_Lives > 0){
+				m_Lives--;
+				m_LifeGraphics[m_Lives].enabled = false;
+			}
 		}
 		// Player collided with an object, lose all food collected.
 		else

@@ -17,26 +17,38 @@ public class Spawning : MonoBehaviour
 	public List<Spawnable> spawnables;
 	List<Spawnable> despawned;
 
+	static Spawning instance;
+
 	void Awake()
 	{
+		if (instance != null && instance != this){
+            Destroy(this.gameObject);
+        }else{
+			instance = this;
+		}
 		GameObject.DontDestroyOnLoad(this);
 		spawnables = new List<Spawnable>((Spawnable[])Resources.FindObjectsOfTypeAll(typeof(Spawnable)));
 		SceneManager.sceneLoaded += SceneChanged;
 	}
 
-	public void RefreshSpawned(){
-		despawned = spawnables.Where((Spawnable s) => {
-			return !s.gameObject.activeSelf;
+	public static void RefreshSpawned(){
+		if(!instance)return;
+
+		instance.despawned = instance.spawnables.Where((Spawnable s) => {
+			return s != null && !s.gameObject.activeSelf;
 		}).ToList();
 	}
 
-	private void SceneChanged(int level)
+	private void SceneChanged(Scene scene, LoadSceneMode mode)
 	{
-		despawned.Clear();
+		spawnables = new List<Spawnable>((Spawnable[])Resources.FindObjectsOfTypeAll(typeof(Spawnable)));
+		if(despawned != null)
+			despawned.Clear();
 	}
 
 	void Update()
 	{
+		if(spawnables.Count <= 0)return;
 		if(toBeSpawned != null && time > 0){
 			time -= Time.deltaTime;
 			return;
@@ -45,8 +57,6 @@ public class Spawning : MonoBehaviour
 			toBeSpawned = null;
 			return;
 		}
-
-		RefreshSpawned();
 
 		if(despawned.Count() > 0 && 1 - (despawned.Count() / (float)spawnables.Count) < PercentageSpawn)
 		{

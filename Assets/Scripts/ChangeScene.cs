@@ -7,10 +7,17 @@ using UnityEngine.UI;
 public class ChangeScene : MonoBehaviour
 {
     public CanvasGroup canvasGroup;
+
+    public GameObject Object;
     // Start is called before the first frame update
     void Start()
     {
         
+    }
+
+    public void Toggle(){
+        if(Object != null)
+            Object.SetActive(!Object.activeSelf);
     }
 
     // Update is called once per frame
@@ -20,6 +27,7 @@ public class ChangeScene : MonoBehaviour
     }
     public void startGame()
     {
+        Time.timeScale = 1;
         StartCoroutine(FadeOut(1f, canvasGroup.alpha, 1));
     }
 
@@ -29,7 +37,7 @@ public class ChangeScene : MonoBehaviour
     }
     public void endGame()
     {
-
+        Application.Quit();
     }
 
     IEnumerator FadeOut(float lerpTime, float start, float end)

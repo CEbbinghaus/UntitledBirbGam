@@ -96,7 +96,10 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	private void FixedUpdate()
 	{
-		m_Rigid.velocity = m_velocity;
+		if (!float.IsNaN(transform.position.x) && !float.IsNaN(transform.position.y) && !float.IsNaN(transform.position.z))
+		{
+			m_Rigid.velocity = m_velocity;
+		}
 	}
 	
 	/// <summary>

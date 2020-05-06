@@ -38,9 +38,11 @@ public class AudioManager : MonoBehaviour {
     public static AudioManager instance;
 
     void Awake(){
-        DontDestroyOnLoad(this);
-        if(!instance)
-            instance = this;
+        if (instance != null && instance != this){
+            Destroy(this.gameObject);
+        }else{
+			instance = this;
+		}
 
         QualitySettings.vSyncCount = 1;
         Application.targetFrameRate = 60;
