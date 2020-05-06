@@ -68,7 +68,6 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
     void Update()
     {
-		m_velocity = m_Rigid.velocity;
 
 		Vector3 playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
@@ -76,11 +75,7 @@ public class PlayerMovement : MonoBehaviour
 
 		if(ContinousMovement)
 			m_movementDirection.Normalize();
-
-		m_velocity += (m_movementDirection * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.deltaTime;
-
-
-		m_velocity *= m_Damp / (Time.deltaTime * 60);
+		
 
 		// // Get the inputs.
 		// m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
@@ -96,10 +91,14 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	private void FixedUpdate()
 	{
-		if (!float.IsNaN(transform.position.x) && !float.IsNaN(transform.position.y) && !float.IsNaN(transform.position.z))
-		{
-			m_Rigid.velocity = m_velocity;
-		}
+		if(float.IsNaN(transform.position.x) || float.IsNaN(transform.position.y) || float.IsNaN(transform.position.z))return;
+		m_velocity = m_Rigid.velocity;
+
+		m_velocity += (m_movementDirection * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.fixedDeltaTime;
+	
+		m_velocity *= m_Damp;
+	
+		m_Rigid.velocity = m_velocity;
 	}
 	
 	/// <summary>
