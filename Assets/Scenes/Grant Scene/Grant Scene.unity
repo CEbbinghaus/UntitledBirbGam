@@ -1797,7 +1797,7 @@ GameObject:
   - component: {fileID: 1006835946}
   - component: {fileID: 1006835942}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Frisbee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1817,9 +1817,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PlayerTransform: {fileID: 755388973}
   m_Speed: 10
-  m_FireTimer: 10
---- !u!135 &1006835942
-SphereCollider:
+--- !u!64 &1006835942
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1828,9 +1827,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1006835943
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1906,7 +1906,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!1001 &1066692173
 PrefabInstance:

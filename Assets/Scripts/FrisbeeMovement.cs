@@ -4,40 +4,71 @@ using UnityEngine;
 
 public class FrisbeeMovement : MonoBehaviour
 {
+	/// <summary>
+	/// The transform of the player.
+	/// </summary>
 	public Transform m_PlayerTransform = null;
 
+	/// <summary>
+	/// If the frisbee has been fired.
+	/// </summary>
 	private bool m_Fired = false;
 
+	/// <summary>
+	/// Rigidbody of the frisbee.
+	/// </summary>
 	private Rigidbody m_Rigid = null;
 
+	/// <summary>
+	/// The speed of the frisbee.
+	/// </summary>
 	public float m_Speed = 3.0f;
 
+	/// <summary>
+	/// The mesh renderer.
+	/// </summary>
 	private MeshRenderer m_MeshRend = null;
 
-	private SphereCollider m_Collider = null;
+	/// <summary>
+	/// The collider.
+	/// </summary>
+	private MeshCollider m_Collider = null;
 
-	public float m_FireTimer = 3.0f;
-
-	private float m_MaxFireTimer = 0.0f;
-
+	/// <summary>
+	/// The height to spawn the frisbee at.
+	/// </summary>
 	private float m_SpawnPosHeight = 0.0f;
+
+	/// <summary>
+	/// The main camera, for quick access.
+	/// </summary>
+	private Camera m_MainCamera = null;
+
+	/// <summary>
+	/// Whether to spawn the frisbee right or left/top or bottom of the screen.
+	/// </summary>
+	private int m_RandomSpawn = 0;
 
 	private void Awake()
 	{
+		// Get components.
 		m_Rigid = GetComponent<Rigidbody>();
 		m_MeshRend = GetComponent<MeshRenderer>();
-		m_Collider = GetComponent<SphereCollider>();
+		m_Collider = GetComponent<MeshCollider>();
 
-		m_MaxFireTimer = m_FireTimer;
+		// Get reference to the main camera, for quick access.
+		m_MainCamera = Camera.main;
 
+		// Calculate the height at which to spawn the frisbee.
 		m_SpawnPosHeight = Camera.main.transform.position.y - transform.position.y;
 	}
 
-	// Update is called once per frame
 	void Update()
     {
+		// If the frisbee has been fired, check if it's on screen.
 		if (m_Fired)
 		{
+			// If the frisbee is offscreen, turn off it's rendering and collision.
 			if (!m_MeshRend.isVisible)
 			{
 				m_MeshRend.enabled = false;
@@ -46,24 +77,51 @@ public class FrisbeeMovement : MonoBehaviour
 				m_Fired = false;
 			}
 		}
+		// Fire the frisbee.
 		else
 		{
+			// Reset variables.
 			m_MeshRend.enabled = true;
 			m_Collider.enabled = true;
+			m_Rigid.useGravity = false;
 
-			transform.position = m_PlayerTransform.right + Camera.main.ViewportToWorldPoint(new Vector3(1.3f, 0.5f, m_SpawnPosHeight));
+			// Spawn offscreen and shoot towards where the player is right now.
+			transform.position = m_MainCamera.ViewportToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
 			transform.LookAt(m_PlayerTransform);
 			m_Rigid.velocity = transform.forward * m_Speed;
 			m_Fired = true;
 		}
-		Debug.Log(m_Rigid.velocity.magnitude);
     }
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		m_MeshRend.enabled = false;
-		m_Collider.enabled = false;
+		// If the frisbee hits something, fall down.
+		m_Rigid.useGravity = true;
 
 		m_Fired = false;
+	}
+
+	private float GetRandomSpawnPosition(bool isXAxis)
+	{
+		// Randomly spawn on the left or right/top or bottom.
+		m_RandomSpawn = Random.Range(0, 2);
+
+		// Spawn right/top.
+		if (m_RandomSpawn == 1)
+		{
+			if (isXAxis)
+				return 1.1f;
+			else
+				return Random.Range(1.1f, 1.9f);
+		}
+
+		// Spawn left/bottom.
+		else
+		{
+			if (isXAxis)
+				return -0.1f;
+			else
+				return Random.Range(-0.9f, -0.1f);
+		}
 	}
 }
