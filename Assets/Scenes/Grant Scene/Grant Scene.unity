@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1429,7 +1429,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 0
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1782,6 +1782,7 @@ MonoBehaviour:
   m_LivesText: {fileID: 527186207}
   m_EndScreen: {fileID: 0}
   m_FinalScore: {fileID: 0}
+  m_Particles: []
 --- !u!4 &755388976
 Transform:
   m_ObjectHideFlags: 0
@@ -2123,7 +2124,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1006835941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4266,7 +4267,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_FoodCollectedText
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 229804887}
     - target: {fileID: 8295165868765027774, guid: ffaed8d83ffcec74092cea12de85612b,
         type: 3}
       propertyPath: m_LivesText
