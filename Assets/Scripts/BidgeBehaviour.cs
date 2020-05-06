@@ -27,6 +27,8 @@ public class BidgeBehaviour : MonoBehaviour
 
 	private RaycastHit m_VisionRaycastHit = new RaycastHit();
 
+	private float m_DeaggroTimer = 10.0f;
+
     /// <summary>
 	/// On startup.
 	/// </summary>
@@ -43,7 +45,7 @@ public class BidgeBehaviour : MonoBehaviour
 		// If Bidge can find a path to the player character and can see them, chase them.
 		if (m_VisionRaycastHit.rigidbody != null)
 		{
-			if (m_VisionRaycastHit.rigidbody.tag == "Player")
+			if (m_VisionRaycastHit.rigidbody.tag == "Player" && m_DeaggroTimer <= 0.0f)
 			{
 				Debug.Log("See the player!");
 				m_Agent.destination = m_PlayerCharacterTransform.position;
@@ -62,11 +64,21 @@ public class BidgeBehaviour : MonoBehaviour
 			Wander();
 			Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
 		}
+
+		if (m_DeaggroTimer > 0.0f)
+		{
+			m_DeaggroTimer -= Time.deltaTime;
+		}
 	}
 
 	private void Wander()
 	{
 		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+	}
+
+	public void SetDeaggroTimer(float deaggroTimer)
+	{
+		m_DeaggroTimer = deaggroTimer;
 	}
 }

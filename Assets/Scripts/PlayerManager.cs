@@ -52,6 +52,8 @@ public class PlayerManager : MonoBehaviour
 
 	public ParticleSystem[] m_Particles = null;
 
+	public float m_DeaggroTimer = 10.0f;
+
 	private void Awake()
 	{
 		if (m_LivesText)
@@ -102,6 +104,7 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_Lives--;
 			m_LivesText.text = m_Lives.ToString();
+			collision.gameObject.GetComponent<BidgeBehaviour>().SetDeaggroTimer(m_DeaggroTimer);
 		}
 		// Player collided with the frisbee, which is active for collision.
 		else if (collision.gameObject.tag == "Frisbee" && collision.gameObject.GetComponent<FrisbeeMovement>().GetFired() == true)
