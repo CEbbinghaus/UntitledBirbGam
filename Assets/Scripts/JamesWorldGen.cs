@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class JamesWorldGen : MonoBehaviour
 {
+    public bool instantiateAsPrefab;
+
     public string parentName;
     public GameObject prefab;
     public Bounds spawnBounds;
@@ -51,7 +53,16 @@ public class JamesWorldGen : MonoBehaviour
             } while (Physics.CheckSphere(randPoint, spacing, layerMask)); // Invalid check
             if (tries <= maxTries)
             {
-                Instantiate(prefab, randPoint, Quaternion.Euler(0, Random.Range(-180f, 180f), 0), parentObject.transform);
+                if (instantiateAsPrefab)
+                {
+                    GameObject obj = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, parentObject.transform);
+                    obj.transform.position = randPoint;
+                    obj.transform.rotation = Quaternion.Euler(0, Random.Range(-180f, 180f), 0);
+                }
+                else
+                {
+                    Instantiate(prefab, randPoint, Quaternion.Euler(0, Random.Range(-180f, 180f), 0), parentObject.transform);
+                }
             }
             else
             {
