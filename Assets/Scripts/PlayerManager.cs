@@ -111,8 +111,9 @@ public class PlayerManager : MonoBehaviour
 		else if (other.tag == "Nest")
 		{
 			m_Score += m_FoodCollected;
+			if(m_FoodCollected > 0)
+				AudioManager.Emit(AudioManager.Event.Score);
 			m_ScoreText.Value = m_Score;
-			AudioManager.Emit(AudioManager.Event.Score);
 			// Reset food collected.
 			m_FoodCollected = 0;
 			if(m_FoodCollectedText)

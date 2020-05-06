@@ -41,6 +41,9 @@ public class AudioManager : MonoBehaviour {
         DontDestroyOnLoad(this);
         if(!instance)
             instance = this;
+
+        QualitySettings.vSyncCount = 1;
+        Application.targetFrameRate = 60;
         
         sources = new List<AudioSource>();
 
