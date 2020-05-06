@@ -260,8 +260,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxFoodCollect: 200
+  m_SandwichPoints: 100
   m_ScoreText: {fileID: 0}
   m_FoodCollectedText: {fileID: 0}
+  m_Lives: 3
+  m_LivesText: {fileID: 0}
 --- !u!1 &270389965
 GameObject:
   m_ObjectHideFlags: 0
@@ -902,7 +905,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2052055622}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 2.64, z: 0.57}
+  m_LocalPosition: {x: 0, y: 62.2, z: 0.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
