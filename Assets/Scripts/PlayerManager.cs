@@ -44,7 +44,7 @@ public class PlayerManager : MonoBehaviour
 	/// <summary>
 	/// The text object that displays the player's lives.
 	/// </summary>
-	public Text m_LivesText = null;
+	public Image[] m_LifeGraphics;
 
 	public GameObject m_EndScreen = null;
 
@@ -54,8 +54,6 @@ public class PlayerManager : MonoBehaviour
 
 	private void Awake()
 	{
-		if (m_LivesText)
-			m_LivesText.text = m_Lives.ToString();
 		Time.timeScale = 1.0f;
 	}
 
@@ -97,17 +95,18 @@ public class PlayerManager : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
+		print(collision.gameObject.tag);
 		// Player collided with Bidge.
 		if (collision.gameObject.tag == "Bidge")
 		{
 			m_Lives--;
-			m_LivesText.text = m_Lives.ToString();
+			m_LifeGraphics[m_Lives].enabled = false;
 		}
 		// Player collided with the frisbee, which is active for collision.
 		else if (collision.gameObject.tag == "Frisbee" && collision.gameObject.GetComponent<FrisbeeMovement>().GetFired() == true)
 		{
 			m_Lives--;
-			m_LivesText.text = m_Lives.ToString();
+			m_LifeGraphics[m_Lives].enabled = false;
 		}
 		// Player collided with an object, lose all food collected.
 		else

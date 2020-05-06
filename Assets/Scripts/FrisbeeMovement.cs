@@ -100,7 +100,7 @@ public class FrisbeeMovement : MonoBehaviour
 				m_Rigid.useGravity = false;
 
 				// Spawn offscreen and shoot towards where the player is right now.
-				transform.position = m_MainCamera.ViewportToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
+				transform.position = m_MainCamera.ScreenToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight), m_MainCamera.stereoActiveEye);
 				transform.LookAt(m_PlayerTransform);
 				m_Rigid.velocity = transform.forward * m_Speed;
 				m_Fired = true;

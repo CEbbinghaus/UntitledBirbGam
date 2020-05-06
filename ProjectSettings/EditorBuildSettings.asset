@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/Chris Scenes/ChrisTesting.unity
-    guid: f4b8e722aee3907488ae94aea9f9e4ed
+    path: Assets/Scenes/Opening Scene.unity
+    guid: 28fb9b9758c49a3479602a190f804cf7
+  - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: 89ddfe7105e76704984ff153599b713f
   m_configObjects: {}

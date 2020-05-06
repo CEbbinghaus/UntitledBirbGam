@@ -27,6 +27,8 @@ public class BidgeBehaviour : MonoBehaviour
 
 	private RaycastHit m_VisionRaycastHit = new RaycastHit();
 
+	float cachedYHeight;
+
     /// <summary>
 	/// On startup.
 	/// </summary>
@@ -34,25 +36,27 @@ public class BidgeBehaviour : MonoBehaviour
     {
 		m_Agent = GetComponent<NavMeshAgent>();
 		m_NavPath = new NavMeshPath();
+		cachedYHeight = transform.position.y;
     }
 
     // Update is called once per frame
     void Update()
     {
+		transform.position = new Vector3(transform.position.x, cachedYHeight, transform.position.z);
 		Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position), out m_VisionRaycastHit);
 		// If Bidge can find a path to the player character and can see them, chase them.
 		if (m_VisionRaycastHit.rigidbody != null)
 		{
 			if (m_VisionRaycastHit.rigidbody.tag == "Player")
 			{
-				Debug.Log("See the player!");
+				//Debug.Log("See the player!");
 				m_Agent.destination = m_PlayerCharacterTransform.position;
 				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(0, 1, 0, 1));
 			}
 			// Else, wander.
 			else
 			{
-				Debug.Log("Can't see the player!");
+				//Debug.Log("Can't see the player!");
 				Wander();
 				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
 			}
