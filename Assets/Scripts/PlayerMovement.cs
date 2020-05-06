@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 		Vector3 nvel = m_velocity.normalized;
-		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(nvel), Time.deltaTime * m_RotSpeed);
+		transform.LookAt(transform.position + nvel, Vector3.up);
     }
 
 	/// <summary>
