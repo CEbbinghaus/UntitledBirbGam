@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1782,6 +1782,7 @@ MonoBehaviour:
   m_LivesText: {fileID: 527186207}
   m_EndScreen: {fileID: 0}
   m_FinalScore: {fileID: 0}
+  m_Particles: []
 --- !u!4 &755388976
 Transform:
   m_ObjectHideFlags: 0
