@@ -21,7 +21,8 @@ public class CameraController : MonoBehaviour
 	void Start()
 	{
 		camera = GetComponent<Camera>();
-		targetRB = target.GetComponent<Rigidbody>();
+		if(targetRB == null)
+			targetRB = target.GetComponent<Rigidbody>();
 	}
 
 	// Update is called once per frame

@@ -46,8 +46,9 @@ public class PlayerManager : MonoBehaviour
 	public Text m_LivesText = null;
 
 	private void Awake()
-	{
-		m_LivesText.text = m_Lives.ToString();
+	{	
+		if(m_LivesText)
+			m_LivesText.text = m_Lives.ToString();
 	}
 
 	/// <summary>
@@ -61,13 +62,15 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_FoodCollected++;
 			other.gameObject.SetActive(false);
-			m_FoodCollectedText.Value = m_FoodCollected;
+			if(m_FoodCollectedText)
+				m_FoodCollectedText.Value = m_FoodCollected;
 		}
 		else if (other.tag == "Sandwich")
 		{
 			m_FoodCollected += m_SandwichPoints;
 			other.gameObject.SetActive(false);
-			m_FoodCollectedText.Value = m_FoodCollected;
+			if(m_FoodCollectedText)
+				m_FoodCollectedText.Value = m_FoodCollected;
 		}
 		// Increase the score by the amount of food the player was holding and update scoreboard.
 		else if (other.tag == "Nest")
