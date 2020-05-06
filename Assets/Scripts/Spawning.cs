@@ -60,7 +60,9 @@ public class Spawning : MonoBehaviour
 
 		if(despawned.Count() > 0 && 1 - (despawned.Count() / (float)spawnables.Count) < PercentageSpawn)
 		{
-			toBeSpawned = despawned.First();
+			int index =  (Random.Range(0, despawned.Count));
+			toBeSpawned = despawned[index];
+			despawned.RemoveAt(index);
 			time = Delay;
 		}
 	}    

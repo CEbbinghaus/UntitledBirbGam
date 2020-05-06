@@ -91,8 +91,10 @@ GameObject:
   - component: {fileID: 1328270410846029909}
   - component: {fileID: 3108837402807293978}
   - component: {fileID: 6420399854508731731}
-  - component: {fileID: 2985698255208961889}
   - component: {fileID: 994289267444624909}
+  - component: {fileID: 1342655201656061556}
+  - component: {fileID: 7949402915258955177}
+  - component: {fileID: 7191508131021274754}
   m_Layer: 9
   m_Name: Tree_Top_01
   m_TagString: Untagged
@@ -161,20 +163,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &2985698255208961889
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1932304559108921741}
-  m_Material: {fileID: 13400000, guid: c488136828a622c428026ffae7c9ae4d, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -8320870051488684326, guid: f1adebc8b4a6d4446b5ed28dcb1d642d, type: 3}
 --- !u!208 &994289267444624909
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -191,3 +179,42 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0.38, y: 4.9820004, z: 0.16}
   m_TimeToStationary: 0.5
+--- !u!135 &1342655201656061556
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1932304559108921741}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.65
+  m_Center: {x: 1.41, y: 4.9819207, z: 0.46}
+--- !u!135 &7949402915258955177
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1932304559108921741}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.9
+  m_Center: {x: -1.02, y: 3.96, z: 1.15}
+--- !u!135 &7191508131021274754
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1932304559108921741}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.71
+  m_Center: {x: 0.41, y: 3.84, z: -1.72}

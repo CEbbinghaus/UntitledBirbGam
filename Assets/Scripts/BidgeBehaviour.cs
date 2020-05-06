@@ -67,6 +67,7 @@ public class BidgeBehaviour : MonoBehaviour
 				//Debug.Log("See the player!");
 				if(src.volume < ChaseVolume)
 					src.volume += Mathf.Lerp(src.volume, ChaseVolume, Time.deltaTime / fadeDuration);
+
 				if(bgsrc.volume > 0)
 					bgsrc.volume -= Mathf.Lerp(bgsrc.volume, 0, Time.deltaTime / fadeDuration);
 

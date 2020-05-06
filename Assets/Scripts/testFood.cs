@@ -9,7 +9,6 @@ public class testFood : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             testManager.tm.heldSeeds++;
-            Debug.Log($"Collected a seed! Now carrying {testManager.tm.heldSeeds} seeds");
             Destroy(gameObject);
         }
     }
