@@ -7,9 +7,14 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 	/// <summary>
-	/// The directions the player is moving the character.
+	/// The players Velocity
 	/// </summary>
-	private Vector3 m_PlayerMovement = Vector3.zero;
+	Vector3 m_velocity = Vector3.zero;
+	
+	/// <summary>
+	/// The directions the player is moving.
+	/// </summary>
+	Vector3 m_movementDirection = Vector3.zero;
 
 	/// <summary>
 	/// The Rigidbody of the player character.
@@ -17,9 +22,20 @@ public class PlayerMovement : MonoBehaviour
 	private Rigidbody m_Rigid = null;
 
 	/// <summary>
+	/// The amount of Dampening on the character
+	/// </summary>
+	[Range(0, 1)]
+	public float m_Damp = .8f;
+
+	/// <summary>
 	/// The speed of the player character.
 	/// </summary>
 	public float m_Speed = 3;
+
+	/// <summary>
+	/// The Rotational speed of the player character.
+	/// </summary>
+	public float m_RotSpeed = 1;
 	
 	/// <summary>
 	/// The player manager on the player character, for getting the food collected.
@@ -47,15 +63,24 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
     void Update()
     {
-		// Reset player inputs vector.
-		m_PlayerMovement = Vector3.zero;
+		m_velocity = m_Rigid.velocity;
 
-		// Get the inputs.
-		m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
-		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
+		Vector3 playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
-		if (m_PlayerMovement.magnitude > 0.0f)
-			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(m_PlayerMovement), m_Speed * Time.deltaTime);
+		m_movementDirection = Vector3.Lerp(m_movementDirection, playerDir, Time.deltaTime * m_RotSpeed).normalized;
+
+		m_velocity += m_movementDirection * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier)) * Time.deltaTime;
+
+
+		m_velocity *= m_Damp;
+
+		// // Get the inputs.
+		// m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");
+		// m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
+
+
+		Vector3 nvel = m_velocity.normalized;
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(nvel), Time.deltaTime * m_RotSpeed);
     }
 
 	/// <summary>
@@ -63,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	private void FixedUpdate()
 	{
-		m_Rigid.velocity = transform.forward * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier)) * Time.deltaTime;
+		m_Rigid.velocity = m_velocity;
 	}
 	
 	/// <summary>
