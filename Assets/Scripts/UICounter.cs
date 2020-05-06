@@ -22,6 +22,11 @@ public class UICounter : MonoBehaviour
 	public float Duration = 2f;
 
 	/// <summary>
+	/// Scale the Duration with the amount.true e.g 2 seconds for 100 values
+	/// </summary>
+	public bool ScaleWithAmount = true;
+
+	/// <summary>
 	/// Time it takes for the Counter to Get to the Current Value
 	/// </summary>
 	public int AmountPerDuration = 100;
@@ -59,12 +64,22 @@ public class UICounter : MonoBehaviour
 
 		//Increase the current Time until it hits one
 		if(time < 1)
-			time += Time.deltaTime / ((Mathf.Abs(_valueTarget - _valueOrigin) / AmountPerDuration) * Duration);
-		else{
+		{
+
+			var divider = Duration;
+
+			if(ScaleWithAmount)
+				divider *= (Mathf.Abs(_valueTarget - _valueOrigin) / AmountPerDuration);
+
+			time += Time.deltaTime / divider;
+		}
+		else
+		{
 			time = 1;
 
 			//Check if this is the frame in which it hits one and will call the Callback letting the 
-			if(_value != _valueTarget){
+			if(_value != _valueTarget)
+			{
 				if(Callback != null)
 					Callback(_valueTarget);
 			}

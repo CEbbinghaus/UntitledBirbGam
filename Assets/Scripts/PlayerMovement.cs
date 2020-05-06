@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
 		m_velocity += (m_movementDirection * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.deltaTime;
 
 
-		m_velocity *= m_Damp;
+		m_velocity *= m_Damp / (Time.deltaTime * 60);
 
 		// // Get the inputs.
 		// m_PlayerMovement += Vector3.right * Input.GetAxis("Horizontal");

@@ -48,7 +48,7 @@ public class PlayerManager : MonoBehaviour
 
 	public GameObject m_EndScreen = null;
 
-	public TextMeshProUGUI m_FinalScore = null;
+	public UICounter m_FinalScore = null;
 
 	public ParticleSystem[] m_Particles = null;
 
@@ -60,11 +60,6 @@ public class PlayerManager : MonoBehaviour
 
 	int seeds, sandwiches;
 
-	private void Awake()
-	{
-		Time.timeScale = 1.0f;
-	}
-
 	/// <summary>
 	/// When the player collides with a trigger (food or the nest).
 	/// </summary>
@@ -75,6 +70,7 @@ public class PlayerManager : MonoBehaviour
 		if (other.tag == "Seed")
 		{
 			m_FoodCollected++;
+			AudioManager.Emit(AudioManager.Event.SmallPickup);
 			seeds++;
 			other.gameObject.SetActive(false);
 			if (seeds < 5)
@@ -95,6 +91,7 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_FoodCollected += m_SandwichPoints;
 			sandwiches++;
+			AudioManager.Emit(AudioManager.Event.BigPickup);
 			other.gameObject.SetActive(false);
 			if (sandwiches < 5)
 			{
@@ -115,6 +112,7 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_Score += m_FoodCollected;
 			m_ScoreText.Value = m_Score;
+			AudioManager.Emit(AudioManager.Event.Score);
 			// Reset food collected.
 			m_FoodCollected = 0;
 			if(m_FoodCollectedText)
@@ -142,9 +140,11 @@ public class PlayerManager : MonoBehaviour
 		// Player collided with Bidge.
 		if (collision.gameObject.tag == "Bidge")
 		{
+			BidgeBehaviour behaviour = collision.gameObject.GetComponent<BidgeBehaviour>();
+			if(behaviour.m_DeaggroTimer > 0)return;
 			m_Lives--;
 			m_LifeGraphics[m_Lives].enabled = false;
-			collision.gameObject.GetComponent<BidgeBehaviour>().SetDeaggroTimer(m_DeaggroTimer);
+			behaviour.SetDeaggroTimer(m_DeaggroTimer);
 		}
 		// Player collided with the frisbee, which is active for collision.
 		else if (collision.gameObject.tag == "Frisbee" && collision.gameObject.GetComponent<FrisbeeMovement>().GetFired() == true)
@@ -171,7 +171,7 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_EndScreen.SetActive(true);
 			Time.timeScale = 0.0f;
-			m_FinalScore.text = m_Score.ToString();
+			m_FinalScore.Value = m_Score;
 		}
 	}
 

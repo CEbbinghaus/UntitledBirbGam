@@ -29,13 +29,26 @@ public class BidgeBehaviour : MonoBehaviour
 
 	float cachedYHeight;
 
-	private float m_DeaggroTimer = 10.0f;
+	[Range(0, 1)]
+	public float ChaseVolume;
+	float bgVolume;
+
+	AudioSource src;
+	AudioSource bgsrc;
+
+	public float fadeDuration = 10000;
+
+
+	public float m_DeaggroTimer = 10.0f;
 
     /// <summary>
 	/// On startup.
 	/// </summary>
-    void Awake()
+    void Start()
     {
+		src = AudioManager.GetSource(AudioManager.Event.Chase);
+		bgVolume = AudioManager.instance.BackgroundVolume;
+		bgsrc = AudioManager.instance.sources[0];
 		m_Agent = GetComponent<NavMeshAgent>();
 		m_NavPath = new NavMeshPath();
 		cachedYHeight = transform.position.y;
@@ -52,6 +65,11 @@ public class BidgeBehaviour : MonoBehaviour
 			if (m_VisionRaycastHit.rigidbody.tag == "Player" && m_DeaggroTimer <= 0.0f)
 			{
 				//Debug.Log("See the player!");
+				if(src.volume < ChaseVolume)
+					src.volume += Mathf.Lerp(src.volume, ChaseVolume, Time.deltaTime / fadeDuration);
+				if(bgsrc.volume > 0)
+					bgsrc.volume -= Mathf.Lerp(bgsrc.volume, 0, Time.deltaTime / fadeDuration);
+
 				m_Agent.destination = m_PlayerCharacterTransform.position;
 				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(0, 1, 0, 1));
 			}
@@ -77,6 +95,12 @@ public class BidgeBehaviour : MonoBehaviour
 
 	private void Wander()
 	{
+		if(src.volume > 0)
+			src.volume -= Mathf.Lerp(src.volume, 0, Time.deltaTime / fadeDuration);
+
+		if(bgsrc.volume < bgVolume)
+			bgsrc.volume += Mathf.Lerp(bgsrc.volume, bgVolume, Time.deltaTime / fadeDuration);
+
 		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
 	}
