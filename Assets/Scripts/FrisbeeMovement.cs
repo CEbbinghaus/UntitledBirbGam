@@ -83,6 +83,8 @@ public class FrisbeeMovement : MonoBehaviour
 			// If the frisbee is offscreen, turn off it's rendering and collision.
 			if (!m_MeshRend.isVisible)
 			{
+				m_MeshRend.enabled = false;
+				m_Collider.enabled = false;
 				m_Fired = false;
 			}
 		}
@@ -109,8 +111,6 @@ public class FrisbeeMovement : MonoBehaviour
 			else
 				m_SpawnTimer -= Time.deltaTime;
 		}
-
-		Debug.Log(m_MeshRend.enabled);
     }
 
 	private void OnCollisionEnter(Collision collision)
