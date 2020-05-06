@@ -51,8 +51,9 @@ public class PlayerManager : MonoBehaviour
 	public TextMeshProUGUI m_FinalScore = null;
 
 	private void Awake()
-		if(m_LivesText)
-		    m_LivesText.text = m_Lives.ToString();
+	{
+		if (m_LivesText)
+			m_LivesText.text = m_Lives.ToString();
 		Time.timeScale = 1.0f;
 	}
 
@@ -106,7 +107,7 @@ public class PlayerManager : MonoBehaviour
 		else
 		{
 			m_FoodCollected = 0;
-			m_FoodCollectedText.text = m_FoodCollected.ToString();
+			m_FoodCollectedText.Value = m_FoodCollected;
 		}
 
 		if (m_Lives <= 0)
