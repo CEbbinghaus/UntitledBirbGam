@@ -167,8 +167,8 @@ public class PlayerManager : MonoBehaviour
 		// Player collided with an object, lose all food collected.
 		else
 		{
-			m_FoodCollected = m_FoodCollected - (int)(m_FoodCollected * 0.1);
-			m_FoodCollectedText.Value = m_FoodCollected;
+			//m_FoodCollected = m_FoodCollected - (int)(m_FoodCollected * 0.1);
+			//m_FoodCollectedText.Value = m_FoodCollected;
 			if (!m_Particles[0].isPlaying)
 				m_Particles[0].Play();
 		}
