@@ -49,12 +49,24 @@ public class FrisbeeMovement : MonoBehaviour
 	/// </summary>
 	private int m_RandomSpawn = 0;
 
+	/// <summary>
+	/// Timer to respawn the frisbee.
+	/// </summary>
+	public float m_SpawnTimer = 3.0f;
+
+	/// <summary>
+	/// For resetting the timer.
+	/// </summary>
+	private float m_MaxSpawnTimer = 0.0f;
+
 	private void Awake()
 	{
 		// Get components.
 		m_Rigid = GetComponent<Rigidbody>();
 		m_MeshRend = GetComponent<MeshRenderer>();
 		m_Collider = GetComponent<MeshCollider>();
+
+		m_MaxSpawnTimer = m_SpawnTimer;
 
 		// Get reference to the main camera, for quick access.
 		m_MainCamera = Camera.main;
@@ -71,34 +83,40 @@ public class FrisbeeMovement : MonoBehaviour
 			// If the frisbee is offscreen, turn off it's rendering and collision.
 			if (!m_MeshRend.isVisible)
 			{
-				m_MeshRend.enabled = false;
-				m_Collider.enabled = false;
-
 				m_Fired = false;
 			}
 		}
-		// Fire the frisbee.
+		// Fire the frisbee if it is time.
 		else
 		{
-			// Reset variables.
-			m_MeshRend.enabled = true;
-			m_Collider.enabled = true;
-			m_Rigid.useGravity = false;
+			// Fire!
+			if (m_SpawnTimer <= 0.0f)
+			{
+				// Reset variables.
+				m_MeshRend.enabled = true;
+				m_Collider.enabled = true;
+				m_Rigid.useGravity = false;
 
-			// Spawn offscreen and shoot towards where the player is right now.
-			transform.position = m_MainCamera.ViewportToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
-			transform.LookAt(m_PlayerTransform);
-			m_Rigid.velocity = transform.forward * m_Speed;
-			m_Fired = true;
+				// Spawn offscreen and shoot towards where the player is right now.
+				transform.position = m_MainCamera.ViewportToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
+				transform.LookAt(m_PlayerTransform);
+				m_Rigid.velocity = transform.forward * m_Speed;
+				m_Fired = true;
+
+				m_SpawnTimer += m_MaxSpawnTimer;
+			}
+			// Decrease timer.
+			else
+				m_SpawnTimer -= Time.deltaTime;
 		}
+
+		Debug.Log(m_MeshRend.enabled);
     }
 
 	private void OnCollisionEnter(Collision collision)
 	{
 		// If the frisbee hits something, fall down.
 		m_Rigid.useGravity = true;
-
-		m_Fired = false;
 	}
 
 	private float GetRandomSpawnPosition(bool isXAxis)
