@@ -59,7 +59,7 @@ public class UICounter : MonoBehaviour
 
 		//Increase the current Time until it hits one
 		if(time < 1)
-			time += Time.deltaTime / (((_valueTarget - _valueOrigin) / AmountPerDuration) * Duration);
+			time += Time.deltaTime / ((Mathf.Abs(_valueTarget - _valueOrigin) / AmountPerDuration) * Duration);
 		else{
 			time = 1;
 
