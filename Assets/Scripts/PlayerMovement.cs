@@ -47,8 +47,6 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	public float m_EncumbranceModifier = 10.0f;
 
-	private float m_RotationTime = 0.0f;
-
 	/// <summary>
 	/// On startup.
 	/// </summary>

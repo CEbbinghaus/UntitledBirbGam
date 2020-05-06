@@ -86,10 +86,22 @@ public class PlayerManager : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
+		// Player collided with Bidge.
 		if (collision.gameObject.tag == "Bidge")
 		{
 			m_Lives--;
 			m_LivesText.text = m_Lives.ToString();
+		}
+		// Player collided with the frisbee, which is active for collision.
+		else if (collision.gameObject.tag == "Frisbee" && collision.gameObject.GetComponent<FrisbeeMovement>().GetFired() == true)
+		{
+			m_Lives--;
+			m_LivesText.text = m_Lives.ToString();
+		}
+
+		if (m_Lives <= 0)
+		{
+			// Player has no lives, put up end screen.
 		}
 	}
 

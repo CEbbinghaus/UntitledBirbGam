@@ -1597,7 +1597,7 @@ GameObject:
   - component: {fileID: 1006835942}
   m_Layer: 0
   m_Name: Frisbee
-  m_TagString: Untagged
+  m_TagString: Frisbee
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
