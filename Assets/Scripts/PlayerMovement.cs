@@ -31,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	public float m_EncumbranceModifier = 10.0f;
 
+	private float m_RotationTime = 0.0f;
+
 	/// <summary>
 	/// On startup.
 	/// </summary>
@@ -55,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 		m_PlayerMovement += Vector3.forward * Input.GetAxis("Vertical");
 
 		if (m_PlayerMovement.magnitude > 0.0f)
-			transform.LookAt(transform.position + m_PlayerMovement, Vector3.up);
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(m_PlayerMovement), m_Speed * Time.deltaTime);
     }
 
 	/// <summary>
