@@ -52,9 +52,16 @@ public class BidgeBehaviour : MonoBehaviour
 			else
 			{
 				Debug.Log("Can't see the player!");
-				if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
-					m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+				Wander();
 			}
 		}
+		else
+			Wander();
     }
+
+	private void Wander()
+	{
+		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+	}
 }
