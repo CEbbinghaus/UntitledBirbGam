@@ -47,17 +47,22 @@ public class BidgeBehaviour : MonoBehaviour
 			{
 				Debug.Log("See the player!");
 				m_Agent.destination = m_PlayerCharacterTransform.position;
+				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(0, 1, 0, 1));
 			}
 			// Else, wander.
 			else
 			{
 				Debug.Log("Can't see the player!");
 				Wander();
+				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
 			}
 		}
 		else
+		{
 			Wander();
-    }
+			Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
+		}
+	}
 
 	private void Wander()
 	{
