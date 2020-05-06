@@ -28,12 +28,12 @@ public class PlayerManager : MonoBehaviour
 	/// <summary>
 	/// The text object that displays the score.
 	/// </summary>
-	public Text m_ScoreText = null;
+	public UICounter m_ScoreText = null;
 
 	/// <summary>
 	/// The text object that displays the amount the player is carrying.
 	/// </summary>
-	public Text m_FoodCollectedText = null;
+	public UICounter m_FoodCollectedText = null;
 
 	/// <summary>
 	/// Player lives.
@@ -61,22 +61,22 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_FoodCollected++;
 			other.gameObject.SetActive(false);
-			m_FoodCollectedText.text = m_FoodCollected.ToString();
+			m_FoodCollectedText.Value = m_FoodCollected;
 		}
 		else if (other.tag == "Sandwich")
 		{
 			m_FoodCollected += m_SandwichPoints;
 			other.gameObject.SetActive(false);
-			m_FoodCollectedText.text = m_FoodCollected.ToString();
+			m_FoodCollectedText.Value = m_FoodCollected;
 		}
 		// Increase the score by the amount of food the player was holding and update scoreboard.
 		else if (other.tag == "Nest")
 		{
 			m_Score += m_FoodCollected;
-			m_ScoreText.text = m_Score.ToString();
+			m_ScoreText.Value = m_Score;
 			// Reset food collected.
 			m_FoodCollected = 0;
-			m_FoodCollectedText.text = m_FoodCollected.ToString();
+			m_FoodCollectedText.Value = m_FoodCollected;
 		}
 	}
 

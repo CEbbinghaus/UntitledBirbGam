@@ -21,8 +21,6 @@ public class UICounter : MonoBehaviour
 	/// </summary>
 	public float Duration = 2f;
 
-	public int testing;
-
 	float time = 0;
 
 	/// <summary>
@@ -53,8 +51,6 @@ public class UICounter : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		if(testing != _valueTarget)
-			Value = testing;
 
 		//Increase the current Time until it hits one
 		if(time < 1)

@@ -930,8 +930,8 @@ MonoBehaviour:
   targetRB: {fileID: 0}
   Targets:
   - {fileID: 2043080760}
-  PredictionDivider: 0.2
-  minDistance: 10
+  PredictionDivider: 1
+  minDistance: 25
   buffer: 0.5
   snap: 2
 --- !u!114 &2052055627
