@@ -21,10 +21,13 @@ public class DynamicCamera : MonoBehaviour
     {
         foreach (var item in searchItems)
         {
-            print($"Distance to {item.name}: {Vector3.Distance(player.transform.position, item.position)}");
-            if (Vector3.Distance(player.transform.position, item.position) < magnetDistance && !c.Targets.Contains(item))
+            //print($"Distance to {item.name}: {Vector3.Distance(player.transform.position, item.position)}");
+            if (Vector3.Distance(player.transform.position, item.position) < magnetDistance)
             {
-                c.Targets.Add(item);
+                if (!c.Targets.Contains(item))
+                {
+                    c.Targets.Add(item);
+                }
             }
             else
             {
