@@ -41,17 +41,32 @@ public class BidgeBehaviour : MonoBehaviour
     {
 		Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position), out m_VisionRaycastHit);
 		// If Bidge can find a path to the player character and can see them, chase them.
-		if (m_VisionRaycastHit.rigidbody.tag == "Player")
+		if (m_VisionRaycastHit.rigidbody != null)
 		{
-			Debug.Log("See the player!");
-			m_Agent.destination = m_PlayerCharacterTransform.position;
+			if (m_VisionRaycastHit.rigidbody.tag == "Player")
+			{
+				Debug.Log("See the player!");
+				m_Agent.destination = m_PlayerCharacterTransform.position;
+				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(0, 1, 0, 1));
+			}
+			// Else, wander.
+			else
+			{
+				Debug.Log("Can't see the player!");
+				Wander();
+				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
+			}
 		}
-		// Else, wander.
 		else
 		{
-			Debug.Log("Can't see the player!");
-			if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
-				m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+			Wander();
+			Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
 		}
-    }
+	}
+
+	private void Wander()
+	{
+		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+	}
 }

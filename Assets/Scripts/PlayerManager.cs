@@ -89,6 +89,9 @@ public class PlayerManager : MonoBehaviour
 			m_FoodCollected = 0;
 			if(m_FoodCollectedText)
 				m_FoodCollectedText.Value = m_FoodCollected;
+
+			// Find an object that spawns food and refresh spawns when the player reaches the nest.
+			FindObjectOfType<Spawning>().RefreshSpawned();
 		}
 	}
 
