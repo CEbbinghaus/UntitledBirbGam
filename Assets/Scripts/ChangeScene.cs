@@ -22,6 +22,11 @@ public class ChangeScene : MonoBehaviour
     {
         StartCoroutine(FadeOut(1f, canvasGroup.alpha, 1));
     }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     public void endGame()
     {
 
