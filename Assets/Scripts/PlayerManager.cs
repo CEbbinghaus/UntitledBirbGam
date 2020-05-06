@@ -111,11 +111,15 @@ public class PlayerManager : MonoBehaviour
 		{
 			m_FoodCollected = m_FoodCollected - (int)(m_FoodCollected * 0.1);
 			m_FoodCollectedText.Value = m_FoodCollected;
-			m_Particles[0].Play();
+			if (!m_Particles[0].isPlaying)
+				m_Particles[0].Play();
 		}
 
-		m_Particles[1].Play();
-		m_Particles[2].Play();
+		if (!m_Particles[1].isPlaying && !m_Particles[2].isPlaying)
+		{
+			m_Particles[1].Play();
+			m_Particles[2].Play();
+		}
 
 		if (m_Lives <= 0)
 		{
