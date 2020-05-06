@@ -142,4 +142,9 @@ public class FrisbeeMovement : MonoBehaviour
 				return Random.Range(-0.9f, -0.1f);
 		}
 	}
+
+	public bool GetFired()
+	{
+		return m_Fired;
+	}
 }
