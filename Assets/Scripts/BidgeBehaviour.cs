@@ -25,6 +25,8 @@ public class BidgeBehaviour : MonoBehaviour
 	/// </summary>
 	public Transform[] m_WanderPoints;
 
+	private RaycastHit m_VisionRaycastHit = new RaycastHit();
+
     /// <summary>
 	/// On startup.
 	/// </summary>
@@ -37,14 +39,19 @@ public class BidgeBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		// If Bidge can't find a path to the player character, wander to a point.
-		if (!m_Agent.CalculatePath(m_PlayerCharacterTransform.position, m_NavPath))
+		Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position), out m_VisionRaycastHit);
+		// If Bidge can find a path to the player character and can see them, chase them.
+		if (m_VisionRaycastHit.rigidbody.tag == "Player")
 		{
+			Debug.Log("See the player!");
+			m_Agent.destination = m_PlayerCharacterTransform.position;
+		}
+		// Else, wander.
+		else
+		{
+			Debug.Log("Can't see the player!");
 			if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 				m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
 		}
-		// Else, move to the player.
-		else
-			m_Agent.destination = m_PlayerCharacterTransform.position;
     }
 }
