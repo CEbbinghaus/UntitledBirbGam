@@ -79,7 +79,8 @@ public class PlayerManager : MonoBehaviour
 			m_ScoreText.Value = m_Score;
 			// Reset food collected.
 			m_FoodCollected = 0;
-			m_FoodCollectedText.Value = m_FoodCollected;
+			if(m_FoodCollectedText)
+				m_FoodCollectedText.Value = m_FoodCollected;
 		}
 	}
 
