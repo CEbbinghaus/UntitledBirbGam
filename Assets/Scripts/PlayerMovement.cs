@@ -28,6 +28,11 @@ public class PlayerMovement : MonoBehaviour
 	public float m_Damp = .8f;
 
 	/// <summary>
+	/// Continue to move forwards even if no keys are pressed
+	/// </summary>
+	public bool ContinousMovement = true;
+
+	/// <summary>
 	/// The speed of the player character.
 	/// </summary>
 	public float m_Speed = 3;
@@ -67,9 +72,12 @@ public class PlayerMovement : MonoBehaviour
 
 		Vector3 playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
-		m_movementDirection = Vector3.Lerp(m_movementDirection, playerDir, Time.deltaTime * m_RotSpeed).normalized;
+		m_movementDirection = Vector3.Lerp(m_movementDirection, playerDir, Time.deltaTime * m_RotSpeed);
 
-		m_velocity += m_movementDirection * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier)) * Time.deltaTime;
+		if(ContinousMovement)
+			m_movementDirection.Normalize();
+
+		m_velocity += (m_movementDirection * ((m_Speed * 100) - (FoodEncumbrance() * m_EncumbranceModifier))) * Time.deltaTime;
 
 
 		m_velocity *= m_Damp;
