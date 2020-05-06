@@ -21,6 +21,11 @@ public class UICounter : MonoBehaviour
 	/// </summary>
 	public float Duration = 2f;
 
+	/// <summary>
+	/// Time it takes for the Counter to Get to the Current Value
+	/// </summary>
+	public int AmountPerDuration = 100;
+
 	float time = 0;
 
 	/// <summary>
@@ -54,7 +59,7 @@ public class UICounter : MonoBehaviour
 
 		//Increase the current Time until it hits one
 		if(time < 1)
-			time += Time.deltaTime / Duration;
+			time += Time.deltaTime / (((_valueTarget - _valueOrigin) / AmountPerDuration) * Duration);
 		else{
 			time = 1;
 
