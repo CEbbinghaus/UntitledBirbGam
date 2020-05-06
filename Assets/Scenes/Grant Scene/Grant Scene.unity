@@ -1817,6 +1817,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PlayerTransform: {fileID: 755388973}
   m_Speed: 10
+  m_SpawnTimer: 3
 --- !u!64 &1006835942
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1886,7 +1887,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1006835940}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.62, y: 0.9, z: -0.49}
+  m_LocalPosition: {x: 43.69, y: 0.9, z: -0.49}
   m_LocalScale: {x: 1.7433, y: 0.1, z: 1.7433}
   m_Children: []
   m_Father: {fileID: 0}
