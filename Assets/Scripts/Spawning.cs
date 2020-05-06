@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Spawning : MonoBehaviour
 {
@@ -14,18 +15,24 @@ public class Spawning : MonoBehaviour
 	public float PercentageSpawn = 0.3f;
 
 	public List<Spawnable> spawnables;
-	IEnumerable<Spawnable> despawned;
+	List<Spawnable> despawned;
 
 	void Awake()
 	{
 		GameObject.DontDestroyOnLoad(this);
 		spawnables = new List<Spawnable>((Spawnable[])Resources.FindObjectsOfTypeAll(typeof(Spawnable)));
+		SceneManager.sceneLoaded += SceneChanged;
 	}
 
 	public void RefreshSpawned(){
 		despawned = spawnables.Where((Spawnable s) => {
 			return !s.gameObject.activeSelf;
-		});
+		}).ToList();
+	}
+
+	private void SceneChanged(int level)
+	{
+		despawned.Clear();
 	}
 
 	void Update()
