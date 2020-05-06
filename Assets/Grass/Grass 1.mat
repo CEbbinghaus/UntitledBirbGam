@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Grass 2
+  m_Name: Grass 1
   m_Shader: {fileID: -6465566751694194690, guid: e84751831a9a0134894fd14192984803,
     type: 3}
   m_ShaderKeywords: 
@@ -38,7 +38,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_8EEF2D51:
-        m_Texture: {fileID: 2800000, guid: a5b4faf7bc4352d4db92c322b6325138, type: 3}
+        m_Texture: {fileID: 2800000, guid: 754dbccd8ccba6046a9e9607b8124c35, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -70,7 +70,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_2589974D: 0.1
+    - Vector1_2589974D: 0.4
     - Vector1_4984EDC7: 0.1
     - Vector1_D137A94F: 0.5
     - Vector1_D8625B44: 1
