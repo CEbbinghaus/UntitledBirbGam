@@ -44,7 +44,7 @@ public class PlayerManager : MonoBehaviour
 	/// <summary>
 	/// The text object that displays the player's lives.
 	/// </summary>
-	public Text m_LivesText = null;
+	public Image[] m_LifeGraphics;
 
 	public GameObject m_EndScreen = null;
 
@@ -52,10 +52,16 @@ public class PlayerManager : MonoBehaviour
 
 	public ParticleSystem[] m_Particles = null;
 
+
+	public float m_DeaggroTimer = 10.0f;
+
+	public FoodHolder sandwichHolder;
+	public FoodHolder seedHolder;
+
+	int seeds, sandwiches;
+
 	private void Awake()
 	{
-		if (m_LivesText)
-			m_LivesText.text = m_Lives.ToString();
 		Time.timeScale = 1.0f;
 	}
 
@@ -69,16 +75,40 @@ public class PlayerManager : MonoBehaviour
 		if (other.tag == "Seed")
 		{
 			m_FoodCollected++;
+			seeds++;
 			other.gameObject.SetActive(false);
-			if(m_FoodCollectedText)
-				m_FoodCollectedText.Value = m_FoodCollected;
+			if (seeds < 5)
+			{
+				seedHolder.food[seeds - 1].enabled = true;
+			}
+			else
+			{
+				for (int i = 1; i < 5; i++)
+				{
+					seedHolder.food[i].enabled = false;
+				}
+				seedHolder.counter.enabled = true;
+				seedHolder.counter.text = "x" + seeds.ToString();
+			}
 		}
 		else if (other.tag == "Sandwich")
 		{
 			m_FoodCollected += m_SandwichPoints;
+			sandwiches++;
 			other.gameObject.SetActive(false);
-			if(m_FoodCollectedText)
-				m_FoodCollectedText.Value = m_FoodCollected;
+			if (sandwiches < 5)
+			{
+				sandwichHolder.food[sandwiches - 1].enabled = true;
+			}
+			else
+			{
+				for (int i = 1; i < 5; i++)
+				{
+					sandwichHolder.food[i].enabled = false;
+				}
+				sandwichHolder.counter.enabled = true;
+				sandwichHolder.counter.text = "x" + sandwiches.ToString();
+			}
 		}
 		// Increase the score by the amount of food the player was holding and update scoreboard.
 		else if (other.tag == "Nest")
@@ -90,6 +120,17 @@ public class PlayerManager : MonoBehaviour
 			if(m_FoodCollectedText)
 				m_FoodCollectedText.Value = m_FoodCollected;
 
+			seeds = 0;
+			sandwiches = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				sandwichHolder.food[i].enabled = false;
+				seedHolder.food[i].enabled = false;
+			}
+			sandwichHolder.counter.enabled = false;
+			seedHolder.counter.enabled = false;
+
+
 			// Find an object that spawns food and refresh spawns when the player reaches the nest.
 			FindObjectOfType<Spawning>().RefreshSpawned();
 		}
@@ -97,17 +138,19 @@ public class PlayerManager : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
+		print(collision.gameObject.tag);
 		// Player collided with Bidge.
 		if (collision.gameObject.tag == "Bidge")
 		{
 			m_Lives--;
-			m_LivesText.text = m_Lives.ToString();
+			m_LifeGraphics[m_Lives].enabled = false;
+			collision.gameObject.GetComponent<BidgeBehaviour>().SetDeaggroTimer(m_DeaggroTimer);
 		}
 		// Player collided with the frisbee, which is active for collision.
 		else if (collision.gameObject.tag == "Frisbee" && collision.gameObject.GetComponent<FrisbeeMovement>().GetFired() == true)
 		{
 			m_Lives--;
-			m_LivesText.text = m_Lives.ToString();
+			m_LifeGraphics[m_Lives].enabled = false;
 		}
 		// Player collided with an object, lose all food collected.
 		else

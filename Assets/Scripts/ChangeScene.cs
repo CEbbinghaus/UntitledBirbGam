@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class ChangeScene : MonoBehaviour
 {
+    public CanvasGroup canvasGroup;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,10 +20,29 @@ public class ChangeScene : MonoBehaviour
     }
     public void startGame()
     {
-        SceneManager.LoadScene("Main", LoadSceneMode.Single);
+        StartCoroutine(FadeOut(1f, canvasGroup.alpha, 1));
     }
     public void endGame()
     {
 
+    }
+
+    IEnumerator FadeOut(float lerpTime, float start, float end)
+    {
+        float timeAtStart = Time.time;
+        float timeSinceStart;
+        float percentageComplete = 0;
+
+        while (percentageComplete < 1) // Keeps looping until the lerp is complete
+        {
+            timeSinceStart = Time.time - timeAtStart;
+            percentageComplete = timeSinceStart / lerpTime;
+
+            float currentValue = Mathf.Lerp(start, end, percentageComplete);
+
+            canvasGroup.alpha = currentValue;
+            yield return new WaitForEndOfFrame();
+        }
+        SceneManager.LoadScene("Main", LoadSceneMode.Single);
     }
 }
