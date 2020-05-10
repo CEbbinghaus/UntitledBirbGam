@@ -31,6 +31,11 @@ public class Spawning : MonoBehaviour
 		SceneManager.sceneLoaded += SceneChanged;
 	}
 
+	public bool IsVisible(Transform t){
+		Vector3 screenPoint = Camera.main.WorldToViewportPoint(t.position);
+		return screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
+	}
+
 	public static void RefreshSpawned(){
 		if(!instance)return;
 
@@ -62,6 +67,7 @@ public class Spawning : MonoBehaviour
 		{
 			int index =  (Random.Range(0, despawned.Count));
 			toBeSpawned = despawned[index];
+			if(IsVisible(toBeSpawned.transform))return;
 			despawned.RemoveAt(index);
 			time = Delay;
 		}

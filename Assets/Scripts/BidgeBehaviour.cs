@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+enum BidgeState {
+	Chasing,
+	Wandering
+}
+
 public class BidgeBehaviour : MonoBehaviour
 {
-	/// <summary>
-	/// The transform of the player.
-	/// </summary>
-	public Transform m_PlayerCharacterTransform = null;
+
 
 	/// <summary>
 	/// The Nav Mesh Agent
@@ -25,7 +27,9 @@ public class BidgeBehaviour : MonoBehaviour
 	/// </summary>
 	public Transform[] m_WanderPoints;
 
-	private RaycastHit m_VisionRaycastHit = new RaycastHit();
+	//private RaycastHit m_VisionRaycastHit = null;
+
+	public Transform target;
 
 	float cachedYHeight;
 
@@ -37,9 +41,17 @@ public class BidgeBehaviour : MonoBehaviour
 	AudioSource bgsrc;
 
 	public float fadeDuration = 10000;
+	float fadeTimer = 0.0f; 
+
+	[Range(0, 1)]
+	public float ViewCone = .05f;
+	public float ViewDistance = 10f;
 
 
 	public float m_DeaggroTimer = 10.0f;
+
+
+	BidgeState state;
 
     /// <summary>
 	/// On startup.
@@ -57,35 +69,15 @@ public class BidgeBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		transform.position = new Vector3(transform.position.x, cachedYHeight, transform.position.z);
-		Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position), out m_VisionRaycastHit);
-		// If Bidge can find a path to the player character and can see them, chase them.
-		if (m_VisionRaycastHit.rigidbody != null)
-		{
-			if (m_VisionRaycastHit.rigidbody.tag == "Player" && m_DeaggroTimer <= 0.0f)
-			{
-				//Debug.Log("See the player!");
-				if(src.volume < ChaseVolume)
-					src.volume += Mathf.Lerp(src.volume, ChaseVolume, Time.deltaTime / fadeDuration);
+		if(target == null)return;
 
-				if(bgsrc.volume > 0)
-					bgsrc.volume -= Mathf.Lerp(bgsrc.volume, 0, Time.deltaTime / fadeDuration);
-
-				m_Agent.destination = m_PlayerCharacterTransform.position;
-				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(0, 1, 0, 1));
-			}
-			// Else, wander.
-			else
-			{
-				//Debug.Log("Can't see the player!");
+		switch(state){
+			case BidgeState.Chasing:
+				Chase();
+			break;
+			case BidgeState.Wandering:
 				Wander();
-				Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
-			}
-		}
-		else
-		{
-			Wander();
-			Debug.DrawLine(transform.position, m_VisionRaycastHit.point, new Color(1, 0, 0, 1));
+			break;
 		}
 
 		if (m_DeaggroTimer > 0.0f)
@@ -94,15 +86,63 @@ public class BidgeBehaviour : MonoBehaviour
 		}
 	}
 
+	private void FixedUpdate() {
+		if(state == BidgeState.Chasing){
+			if(fadeTimer < 1)
+				fadeTimer += Time.fixedDeltaTime / fadeDuration;
+		}else if(state == BidgeState.Wandering){
+			if(fadeTimer > 0)
+				fadeTimer -= Time.fixedDeltaTime / fadeDuration;
+		}
+
+		src.volume = Mathf.Lerp(ChaseVolume, 0, fadeTimer);
+		bgsrc.volume = Mathf.Lerp(bgVolume, 0, 1 - fadeTimer);
+	}
+
+	private void Chase(){
+		var diff = target.position - transform.position;
+
+		m_Agent.destination = target.position;
+
+		float abs = Mathf.Abs(Vector3.Dot(transform.forward, diff.normalized));
+		print(abs);
+
+		//If the Player is Outside the View Distance
+		if(m_DeaggroTimer > 0 || diff.magnitude > ViewDistance * 1.5){
+			state = BidgeState.Wandering;
+			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+		}
+	}
+
 	private void Wander()
 	{
-		if(src.volume > 0)
-			src.volume -= Mathf.Lerp(src.volume, 0, Time.deltaTime / fadeDuration);
+		//transform.position = new Vector3(transform.position.x, cachedYHeight, transform.position.z);
 
-		if(bgsrc.volume < bgVolume)
-			bgsrc.volume += Mathf.Lerp(bgsrc.volume, bgVolume, Time.deltaTime / fadeDuration);
+		var diff = target.position - transform.position;
+		var dir = diff.normalized;
 
-		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+		//Check if the Player is within Bidge's View Cone
+		float abs = Vector3.Dot(transform.forward, diff.normalized);
+		print(abs);
+
+		//Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position),out m_VisionRaycastHit, ViewDistance);
+		
+		// If Bidge can find a path to the player character and can see them, chase them.
+		// if (m_VisionRaycastHit.collider.tag == "Player" && m_DeaggroTimer <= 0.0f)
+		// {
+			//Debug.Log("See the player!");
+
+		// }
+
+		//If the Player is within the Distance that the Bird can see
+		if(abs > 1 - ViewCone && diff.magnitude <= ViewDistance){
+			state = BidgeState.Chasing;
+			m_Agent.destination = target.position;
+			return;
+		}
+
+		//Go to Random Wander point if at Current Wander Point
+		if(Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
 	}
 
