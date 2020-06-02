@@ -27,8 +27,6 @@ public class BidgeBehaviour : MonoBehaviour
 	/// </summary>
 	public Transform[] m_WanderPoints;
 
-	//private RaycastHit m_VisionRaycastHit = null;
-
 	public Transform target;
 
 	float cachedYHeight;
@@ -86,7 +84,7 @@ public class BidgeBehaviour : MonoBehaviour
 		}
 	}
 
-	private void FixedUpdate() {
+	private void FixedUpdate(){
 		if(state == BidgeState.Chasing){
 			if(fadeTimer < 1)
 				fadeTimer += Time.fixedDeltaTime / fadeDuration;
@@ -99,43 +97,38 @@ public class BidgeBehaviour : MonoBehaviour
 		bgsrc.volume = Mathf.Lerp(bgVolume, 0, 1 - fadeTimer);
 	}
 
+	private bool inViewCone(){
+		var diff = target.position - transform.position;
+		float abs = Vector3.Dot(transform.forward, diff.normalized);
+		if(diff.magnitude <= ViewDistance / 10 || abs > 1 - ViewCone && diff.magnitude <= ViewDistance){
+			RaycastHit hit;
+			if(Physics.Raycast(transform.position, diff, out hit, ViewDistance)){
+				return (hit.transform.gameObject.tag == "Player");
+			}else{
+				Debug.LogError("Math is Fucked Fix your shit man");
+			}
+		}
+		return false;
+	}
+
 	private void Chase(){
 		var diff = target.position - transform.position;
 
 		m_Agent.destination = target.position;
-
-		float abs = Mathf.Abs(Vector3.Dot(transform.forward, diff.normalized));
-		print(abs);
+		//print(abs);
 
 		//If the Player is Outside the View Distance
-		if(m_DeaggroTimer > 0 || diff.magnitude > ViewDistance * 1.5){
+		if(m_DeaggroTimer > 0 || !inViewCone()){
 			state = BidgeState.Wandering;
-			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+
+			if(Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+				m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
 		}
 	}
 
 	private void Wander()
 	{
-		//transform.position = new Vector3(transform.position.x, cachedYHeight, transform.position.z);
-
-		var diff = target.position - transform.position;
-		var dir = diff.normalized;
-
-		//Check if the Player is within Bidge's View Cone
-		float abs = Vector3.Dot(transform.forward, diff.normalized);
-		print(abs);
-
-		//Physics.Raycast(transform.position, (m_PlayerCharacterTransform.position - transform.position),out m_VisionRaycastHit, ViewDistance);
-		
-		// If Bidge can find a path to the player character and can see them, chase them.
-		// if (m_VisionRaycastHit.collider.tag == "Player" && m_DeaggroTimer <= 0.0f)
-		// {
-			//Debug.Log("See the player!");
-
-		// }
-
-		//If the Player is within the Distance that the Bird can see
-		if(abs > 1 - ViewCone && diff.magnitude <= ViewDistance){
+		if(inViewCone()){
 			state = BidgeState.Chasing;
 			m_Agent.destination = target.position;
 			return;
