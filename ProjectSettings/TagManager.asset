@@ -9,6 +9,7 @@ TagManager:
   - Sandwich
   - Bidge
   - Frisbee
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -21,9 +22,9 @@ TagManager:
   - food
   - obstacles
   - PostProcessing
-  - 
-  - 
-  - 
+  - Ground
+  - Enemies
+  - Player
   - 
   - 
   - 

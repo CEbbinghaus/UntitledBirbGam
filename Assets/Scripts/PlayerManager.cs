@@ -146,7 +146,7 @@ public class PlayerManager : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		//print(collision.gameObject.tag);
+		print("Collided with: " + collision.gameObject.name);
 		// Player collided with Bidge.
 		if (collision.gameObject.tag == "Bidge")
 		{
@@ -161,7 +161,8 @@ public class PlayerManager : MonoBehaviour
 		{
 			if(m_Lives > 0){
 				m_Lives--;
-				m_LifeGraphics[m_Lives].enabled = false;
+				if(m_LifeGraphics[m_Lives])
+					m_LifeGraphics[m_Lives].enabled = false;
 			}
 		}
 		// Player collided with an object, lose all food collected.

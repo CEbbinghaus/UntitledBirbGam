@@ -8,9 +8,7 @@ enum BidgeState {
 	Wandering
 }
 
-public class BidgeBehaviour : MonoBehaviour
-{
-
+public class BidgeBehaviour : MonoBehaviour{
 
 	/// <summary>
 	/// The Nav Mesh Agent
@@ -64,6 +62,12 @@ public class BidgeBehaviour : MonoBehaviour
 		cachedYHeight = transform.position.y;
     }
 
+	public void StopChasing(){
+		SetDeaggroTimer(5);
+		state = BidgeState.Wandering;
+		setRandomTarget();
+	}
+
     // Update is called once per frame
     void Update()
     {
@@ -78,8 +82,7 @@ public class BidgeBehaviour : MonoBehaviour
 			break;
 		}
 
-		if (m_DeaggroTimer > 0.0f)
-		{
+		if (m_DeaggroTimer > 0.0f){
 			m_DeaggroTimer -= Time.deltaTime;
 		}
 	}
@@ -111,6 +114,10 @@ public class BidgeBehaviour : MonoBehaviour
 		return false;
 	}
 
+	void setRandomTarget(){
+		m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+	}
+
 	private void Chase(){
 		var diff = target.position - transform.position;
 
@@ -122,13 +129,12 @@ public class BidgeBehaviour : MonoBehaviour
 			state = BidgeState.Wandering;
 
 			if(Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
-				m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+				setRandomTarget();
 		}
 	}
 
-	private void Wander()
-	{
-		if(inViewCone()){
+	private void Wander(){
+		if(m_DeaggroTimer <= 0.0f && inViewCone()){
 			state = BidgeState.Chasing;
 			m_Agent.destination = target.position;
 			return;
@@ -136,11 +142,10 @@ public class BidgeBehaviour : MonoBehaviour
 
 		//Go to Random Wander point if at Current Wander Point
 		if(Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
-			m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
+			setRandomTarget();
 	}
 
-	public void SetDeaggroTimer(float deaggroTimer)
-	{
+	public void SetDeaggroTimer(float deaggroTimer){
 		m_DeaggroTimer = deaggroTimer;
 	}
 }
