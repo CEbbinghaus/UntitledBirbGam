@@ -146,7 +146,7 @@ public class PlayerManager : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		print("Collided with: " + collision.gameObject.name);
+		// print("Collided with: " + collision.gameObject.name);
 		// Player collided with Bidge.
 		if (collision.gameObject.tag == "Bidge")
 		{
