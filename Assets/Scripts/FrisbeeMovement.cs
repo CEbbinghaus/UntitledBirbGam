@@ -26,7 +26,8 @@ public class FrisbeeMovement : MonoBehaviour
 
 	public float Speed = 3.0f;
 
-	private void Awake(){
+	private void Awake()
+	{
 		// Get components.
 		rb = GetComponent<Rigidbody>();
 		collider = GetComponent<MeshCollider>();
@@ -40,16 +41,19 @@ public class FrisbeeMovement : MonoBehaviour
 		SpawnHeight = transform.position.y;
 	}
 
-	bool IsOnScreen(){
+	bool IsOnScreen()
+	{
 		Vector3 screenpos = MainCamera.WorldToViewportPoint(transform.position);
 		return (screenpos.x > 0 && screenpos.x < 1 && screenpos.y > 0 && screenpos.y < 1);
 	}
 
-	void Update(){
+	void Update()
+	{
 
-		if(IsOnScreen())return;
+		if (IsOnScreen())return;
 
-		if (SpawnTimer <= 0.0f){
+		if (SpawnTimer <= 0.0f)
+		{
 			// Reset variables.
 			collider.enabled = true;
 			rb.useGravity = false;
@@ -74,11 +78,12 @@ public class FrisbeeMovement : MonoBehaviour
 		}
 		else
 			SpawnTimer -= Time.deltaTime;
-    }
+	}
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		if(collision.transform.tag == "Bidge"){
+		if (collision.transform.tag == "Bidge")
+		{
 			BidgeBehaviour b = collision.gameObject.GetComponent<BidgeBehaviour>();
 			b.StopChasing();
 		}
@@ -86,17 +91,18 @@ public class FrisbeeMovement : MonoBehaviour
 		rb.useGravity = true;
 	}
 
-	private Vector3 GetRandomSpawnPosition(int offset){
-		
+	private Vector3 GetRandomSpawnPosition(int offset)
+	{
+
 		int x = (Random.Range(0, 1) == 1) ? Random.Range(-offset, 0) : Random.Range(Screen.width, Screen.width + offset);
 		int y = (Random.Range(0, 1) == 1) ? Random.Range(-offset, 0) : Random.Range(Screen.height, Screen.height + offset);
-
 
 		Ray ray = MainCamera.ScreenPointToRay(new Vector3(x, y, 0));
 
 		Plane hPlane = new Plane(Vector3.up, Vector3.zero);
-		float distance = 0; 
-		if (hPlane.Raycast(ray, out distance)){
+		float distance = 0;
+		if (hPlane.Raycast(ray, out distance))
+		{
 			return ray.GetPoint(distance);
 		}
 

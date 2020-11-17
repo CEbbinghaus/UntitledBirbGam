@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-enum BidgeState {
+enum BidgeState
+{
 	Chasing,
 	Wandering
 }
 
-public class BidgeBehaviour : MonoBehaviour{
+public class BidgeBehaviour : MonoBehaviour
+{
 
 	/// <summary>
 	/// The Nav Mesh Agent
@@ -37,62 +39,67 @@ public class BidgeBehaviour : MonoBehaviour{
 	AudioSource bgsrc;
 
 	public float fadeDuration = 10000;
-	float fadeTimer = 0.0f; 
+	float fadeTimer = 0.0f;
 
 	[Range(0, 1)]
 	public float ViewCone = .05f;
 	public float ViewDistance = 10f;
 
-
 	public float m_DeaggroTimer = 10.0f;
-
 
 	BidgeState state;
 
-    /// <summary>
+	/// <summary>
 	/// On startup.
 	/// </summary>
-    void Start()
-    {
+	void Start()
+	{
 		src = AudioManager.GetSource(AudioManager.Event.Chase);
 		bgVolume = AudioManager.instance.BackgroundVolume;
 		bgsrc = AudioManager.instance.sources[0];
 		m_Agent = GetComponent<NavMeshAgent>();
 		m_NavPath = new NavMeshPath();
 		cachedYHeight = transform.position.y;
-    }
+	}
 
-	public void StopChasing(){
+	public void StopChasing()
+	{
 		SetDeaggroTimer(5);
 		state = BidgeState.Wandering;
 		setRandomTarget();
 	}
 
-    // Update is called once per frame
-    void Update()
-    {
-		if(target == null)return;
+	// Update is called once per frame
+	void Update()
+	{
+		if (target == null)return;
 
-		switch(state){
+		switch (state)
+		{
 			case BidgeState.Chasing:
 				Chase();
-			break;
+				break;
 			case BidgeState.Wandering:
 				Wander();
-			break;
+				break;
 		}
 
-		if (m_DeaggroTimer > 0.0f){
+		if (m_DeaggroTimer > 0.0f)
+		{
 			m_DeaggroTimer -= Time.deltaTime;
 		}
 	}
 
-	private void FixedUpdate(){
-		if(state == BidgeState.Chasing){
-			if(fadeTimer < 1)
+	private void FixedUpdate()
+	{
+		if (state == BidgeState.Chasing)
+		{
+			if (fadeTimer < 1)
 				fadeTimer += Time.fixedDeltaTime / fadeDuration;
-		}else if(state == BidgeState.Wandering){
-			if(fadeTimer > 0)
+		}
+		else if (state == BidgeState.Wandering)
+		{
+			if (fadeTimer > 0)
 				fadeTimer -= Time.fixedDeltaTime / fadeDuration;
 		}
 
@@ -100,52 +107,63 @@ public class BidgeBehaviour : MonoBehaviour{
 		bgsrc.volume = Mathf.Lerp(bgVolume, 0, 1 - fadeTimer);
 	}
 
-	private bool inViewCone(){
+	private bool inViewCone()
+	{
 		var diff = target.position - transform.position;
 		float abs = Vector3.Dot(transform.forward, diff.normalized);
-		if(diff.magnitude <= ViewDistance / 10 || abs > 1 - ViewCone && diff.magnitude <= ViewDistance){
+		if (diff.magnitude <= ViewDistance / 10 || abs > 1 - ViewCone && diff.magnitude <= ViewDistance)
+		{
 			RaycastHit hit;
-			if(Physics.Raycast(transform.position, diff, out hit, ViewDistance)){
+			if (Physics.Raycast(transform.position, diff, out hit, ViewDistance))
+			{
 				return (hit.transform.gameObject.tag == "Player");
-			}else{
+			}
+			else
+			{
 				Debug.LogError("Math is Fucked Fix your shit man");
 			}
 		}
 		return false;
 	}
 
-	void setRandomTarget(){
+	void setRandomTarget()
+	{
 		m_Agent.destination = m_WanderPoints[Random.Range(0, m_WanderPoints.Length)].position;
 	}
 
-	private void Chase(){
+	private void Chase()
+	{
 		var diff = target.position - transform.position;
 
 		m_Agent.destination = target.position;
 		//print(abs);
 
 		//If the Player is Outside the View Distance
-		if(m_DeaggroTimer > 0 || !inViewCone()){
+		if (m_DeaggroTimer > 0 || !inViewCone())
+		{
 			state = BidgeState.Wandering;
 
-			if(Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+			if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 				setRandomTarget();
 		}
 	}
 
-	private void Wander(){
-		if(m_DeaggroTimer <= 0.0f && inViewCone()){
+	private void Wander()
+	{
+		if (m_DeaggroTimer <= 0.0f && inViewCone())
+		{
 			state = BidgeState.Chasing;
 			m_Agent.destination = target.position;
 			return;
 		}
 
 		//Go to Random Wander point if at Current Wander Point
-		if(Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
+		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 			setRandomTarget();
 	}
 
-	public void SetDeaggroTimer(float deaggroTimer){
+	public void SetDeaggroTimer(float deaggroTimer)
+	{
 		m_DeaggroTimer = deaggroTimer;
 	}
 }

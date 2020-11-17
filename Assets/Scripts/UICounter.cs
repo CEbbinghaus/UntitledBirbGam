@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class UICounter : MonoBehaviour
@@ -37,19 +37,26 @@ public class UICounter : MonoBehaviour
 	/// Value of the Counter
 	/// </summary>
 	/// <value></value>
-	[field: SerializeField]
-	public int Value{
-		get{
+	[field : SerializeField]
+	public int Value
+	{
+		get
+		{
 			return _value;
 		}
 
-		set{
+		set
+		{
 			_valueOrigin = _value;
 			_valueTarget = value;
 			time = 0;
 		}
 	}
 
+	internal void SetValue(int value)
+	{
+		Value = value;
+	}
 
 	// Start is called before the first frame update
 	void Start()
@@ -63,12 +70,12 @@ public class UICounter : MonoBehaviour
 	{
 
 		//Increase the current Time until it hits one
-		if(time < 1)
+		if (time < 1)
 		{
 
 			var divider = Duration;
 
-			if(ScaleWithAmount)
+			if (ScaleWithAmount)
 				divider *= (Mathf.Abs(_valueTarget - _valueOrigin) / AmountPerDuration);
 
 			time += Time.unscaledDeltaTime / divider;
@@ -78,15 +85,15 @@ public class UICounter : MonoBehaviour
 			time = 1;
 
 			//Check if this is the frame in which it hits one and will call the Callback letting the 
-			if(_value != _valueTarget)
+			if (_value != _valueTarget)
 			{
-				if(Callback != null)
+				if (Callback != null)
 					Callback(_valueTarget);
 			}
 		}
 
 		// Update the current Value to Interpolate between the Origin and the Target
-		if(_value != _valueTarget)
+		if (_value != _valueTarget)
 			_value = Mathf.RoundToInt(Mathf.SmoothStep(_valueOrigin, _valueTarget, time));
 
 		text.text = string.Format(Format, _value);
