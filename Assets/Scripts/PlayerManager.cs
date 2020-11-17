@@ -130,22 +130,22 @@ public class PlayerManager : MonoBehaviour
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				holder.food[i].enabled = false;
+				holder.food[i].SetActive(false);
 			}
-			holder.counter.enabled = false;
+			holder.counter.SetActive(false);
 			return;
 		}
 		if (collected < 5)
 		{
-			holder.food[collected - 1].enabled = true;
+			holder.food[collected - 1].SetActive(true);
 		}
 		else
 		{
-			for (int i = 1; i < 5; i++)
+			for (int i = 0; i < 5; i++)
 			{
-				holder.food[i].enabled = false;
+				holder.food[i].SetActive(false);
 			}
-			holder.counter.enabled = true;
+			holder.counter.SetActive(true);
 			holder.counter.text = "x" + collected;
 		}
 	}
