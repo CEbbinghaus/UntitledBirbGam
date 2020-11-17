@@ -121,7 +121,6 @@ public class PlayerManager : MonoBehaviour
 				UpdateCollectedUI(sandwichHolder, sandwiches);
 				break;
 		}
-		UpdateEncumberanceBar();
 	}
 
 	void UpdateCollectedUI(FoodHolder holder, int collected)
@@ -192,10 +191,15 @@ public class PlayerManager : MonoBehaviour
 		}
 	}
 
+	void Update()
+	{
+		UpdateEncumberanceBar();
+	}
+
 	void UpdateEncumberanceBar()
 	{
 		if (EncumbranceBar)
-			EncumbranceBar.fillAmount = Mathf.Min(FoodEncumbrance(), 1);
+			EncumbranceBar.fillAmount = Mathf.Lerp(EncumbranceBar.fillAmount, Mathf.Min(FoodEncumbrance(), 1), Time.deltaTime);
 	}
 
 	/// <summary>

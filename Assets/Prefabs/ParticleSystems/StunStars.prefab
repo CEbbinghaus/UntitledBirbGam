@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1177496942602195026}
   - component: {fileID: 1177496942602195025}
   - component: {fileID: 1177496942602195024}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: StunStars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1042,24 +1042,24 @@ ParticleSystem:
           time: 0
           value: 0
           inSlope: 0
-          outSlope: 6.7326894
+          outSlope: 4.3553166
           tangentMode: 65
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.14852905
-          value: 1
-          inSlope: 0.11561947
-          outSlope: 0.11561947
+          time: 0.21812439
+          value: 0.95000076
+          inSlope: 0.000004269336
+          outSlope: 0.000004269336
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.83206815
           outWeight: 0.13022774
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: -1.1744382
+          inSlope: -1.215028
           outSlope: 0
           tangentMode: 5
           weightedMode: 0
@@ -1081,8 +1081,8 @@ ParticleSystem:
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.14644352
-          value: 0.30769232
+          time: 0.24168125
+          value: 0.70769
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -1670,7 +1670,7 @@ ParticleSystem:
     z:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 1
+      scalar: 2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4049,7 +4049,7 @@ ParticleSystem:
     textureMode: 0
     ribbonCount: 5
     shadowBias: 0.5
-    worldSpace: 1
+    worldSpace: 0
     dieWithParticles: 1
     sizeAffectsWidth: 1
     sizeAffectsLifetime: 0
