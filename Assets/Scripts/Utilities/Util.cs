@@ -31,6 +31,9 @@ public static partial class Util
 		if (camera == null)
 			camera = Camera.main;
 
+		if (camera == null)
+			return false;
+
 		Vector3 ViewportPos = camera.WorldToViewportPoint(point);
 		if (ViewportPos.x > 0 && ViewportPos.x < 1 && ViewportPos.y > 0 && ViewportPos.y < 1)
 		{

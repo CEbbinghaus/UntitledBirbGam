@@ -41,16 +41,10 @@ public class FrisbeeMovement : MonoBehaviour
 		SpawnHeight = transform.position.y;
 	}
 
-	bool IsOnScreen()
-	{
-		Vector3 screenpos = MainCamera.WorldToViewportPoint(transform.position);
-		return (screenpos.x > 0 && screenpos.x < 1 && screenpos.y > 0 && screenpos.y < 1);
-	}
-
 	void Update()
 	{
 
-		if (IsOnScreen())return;
+		if (Util.inViewFrostrum(transform.position))return;
 
 		if (SpawnTimer <= 0.0f)
 		{
