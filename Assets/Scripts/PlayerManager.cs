@@ -81,15 +81,15 @@ public class PlayerManager : MonoBehaviour
 			other.gameObject.SetActive(false);
 			if (seeds < 5)
 			{
-				seedHolder.food[seeds - 1].enabled = true;
+				seedHolder.food[seeds - 1].gameObject.SetActive(true);
 			}
 			else
 			{
 				for (int i = 1; i < 5; i++)
 				{
-					seedHolder.food[i].enabled = false;
+					seedHolder.food[i].gameObject.SetActive(false);
 				}
-				seedHolder.counter.enabled = true;
+				seedHolder.counter.gameObject.SetActive(true);
 				seedHolder.counter.text = "x" + seeds.ToString();
 			}
 		}
@@ -101,15 +101,15 @@ public class PlayerManager : MonoBehaviour
 			other.gameObject.SetActive(false);
 			if (sandwiches < 5)
 			{
-				sandwichHolder.food[sandwiches - 1].enabled = true;
+				sandwichHolder.food[sandwiches - 1].gameObject.SetActive(true);
 			}
 			else
 			{
 				for (int i = 1; i < 5; i++)
 				{
-					sandwichHolder.food[i].enabled = false;
+					sandwichHolder.food[i].gameObject.SetActive(false);
 				}
-				sandwichHolder.counter.enabled = true;
+				sandwichHolder.counter.gameObject.SetActive(true);
 				sandwichHolder.counter.text = "x" + sandwiches.ToString();
 			}
 		}
@@ -132,11 +132,11 @@ public class PlayerManager : MonoBehaviour
 			sandwiches = 0;
 			for (int i = 0; i < 5; i++)
 			{
-				sandwichHolder.food[i].enabled = false;
-				seedHolder.food[i].enabled = false;
+				sandwichHolder.food[i].gameObject.SetActive(false);
+				seedHolder.food[i].gameObject.SetActive(false);
 			}
-			sandwichHolder.counter.enabled = false;
-			seedHolder.counter.enabled = false;
+			sandwichHolder.counter.gameObject.SetActive(false);
+			seedHolder.counter.gameObject.SetActive(false);
 
 
 			// Find an object that spawns food and refresh spawns when the player reaches the nest.
