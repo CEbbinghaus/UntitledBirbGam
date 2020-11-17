@@ -4,154 +4,103 @@ using UnityEngine;
 
 public class FrisbeeMovement : MonoBehaviour
 {
-	/// <summary>
-	/// The transform of the player.
-	/// </summary>
-	public Transform m_PlayerTransform = null;
+	bool m_Fired = false;
 
-	/// <summary>
-	/// If the frisbee has been fired.
-	/// </summary>
-	private bool m_Fired = false;
+	public Rigidbody rb = null;
 
-	/// <summary>
-	/// Rigidbody of the frisbee.
-	/// </summary>
-	private Rigidbody m_Rigid = null;
+	MeshCollider collider = null;
 
-	/// <summary>
-	/// The speed of the frisbee.
-	/// </summary>
-	public float m_Speed = 3.0f;
+	float SpawnHeight = 0.0f;
 
-	/// <summary>
-	/// The mesh renderer.
-	/// </summary>
-	private MeshRenderer m_MeshRend = null;
+	Camera MainCamera = null;
 
-	/// <summary>
-	/// The collider.
-	/// </summary>
-	private MeshCollider m_Collider = null;
+	int m_RandomSpawn = 0;
 
-	/// <summary>
-	/// The height to spawn the frisbee at.
-	/// </summary>
-	private float m_SpawnPosHeight = 0.0f;
+	float m_MaxSpawnTimer = 0.0f;
 
-	/// <summary>
-	/// The main camera, for quick access.
-	/// </summary>
-	private Camera m_MainCamera = null;
+	public int screenOffset = 50;
 
-	/// <summary>
-	/// Whether to spawn the frisbee right or left/top or bottom of the screen.
-	/// </summary>
-	private int m_RandomSpawn = 0;
+	public Transform Player = null;
 
-	/// <summary>
-	/// Timer to respawn the frisbee.
-	/// </summary>
-	public float m_SpawnTimer = 3.0f;
+	public float SpawnTimer = 3.0f;
 
-	/// <summary>
-	/// For resetting the timer.
-	/// </summary>
-	private float m_MaxSpawnTimer = 0.0f;
+	public float Speed = 3.0f;
 
-	private void Awake()
-	{
+	private void Awake(){
 		// Get components.
-		m_Rigid = GetComponent<Rigidbody>();
-		m_MeshRend = GetComponent<MeshRenderer>();
-		m_Collider = GetComponent<MeshCollider>();
+		rb = GetComponent<Rigidbody>();
+		collider = GetComponent<MeshCollider>();
 
-		m_MaxSpawnTimer = m_SpawnTimer;
+		m_MaxSpawnTimer = SpawnTimer;
 
 		// Get reference to the main camera, for quick access.
-		m_MainCamera = Camera.main;
+		MainCamera = Camera.main;
 
 		// Calculate the height at which to spawn the frisbee.
-		m_SpawnPosHeight = Camera.main.transform.position.y - transform.position.y;
+		SpawnHeight = transform.position.y;
 	}
 
-	void Update()
-    {
-		// If the frisbee has been fired, check if it's on screen.
-		if (m_Fired)
-		{
-			// If the frisbee is offscreen, turn off it's rendering and collision.
-			if (!m_MeshRend.isVisible)
-			{
-				m_MeshRend.enabled = false;
-				m_Collider.enabled = false;
-				m_Fired = false;
-			}
+	bool IsOnScreen(){
+		Vector3 screenpos = MainCamera.WorldToViewportPoint(transform.position);
+		return (screenpos.x > 0 && screenpos.x < 1 && screenpos.y > 0 && screenpos.y < 1);
+	}
+
+	void Update(){
+
+		if(IsOnScreen())return;
+
+		if (SpawnTimer <= 0.0f){
+			// Reset variables.
+			collider.enabled = true;
+			rb.useGravity = false;
+
+			transform.position = GetRandomSpawnPosition(screenOffset) + Vector3.up * SpawnHeight;
+			//transform.position = MainCamera.ScreenToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), SpawnHeight));
+
+			// Don't spawn in an object.
+			// int i = 0;
+			// while (Physics.CheckSphere(transform.position, 1) && i++ < 1000)
+			// {
+			// 	// Spawn offscreen and shoot towards where the player is right now.
+			// 	//transform.position = MainCamera.ScreenToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), SpawnHeight), MainCamera.stereoActiveEye);
+			// }
+
+			transform.rotation = Quaternion.identity;
+			Vector3 velocity = Player.GetComponent<Rigidbody>().velocity;
+			rb.velocity = ((Player.position + velocity) - transform.position).normalized * Speed;
+			m_Fired = true;
+
+			SpawnTimer = m_MaxSpawnTimer;
 		}
-		// Fire the frisbee if it is time.
 		else
-		{
-			// Fire!
-			if (m_SpawnTimer <= 0.0f)
-			{
-				// Reset variables.
-				m_MeshRend.enabled = true;
-				m_Collider.enabled = true;
-				m_Rigid.useGravity = false;
-
-				transform.position = m_MainCamera.ScreenToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight));
-
-				// Don't spawn in an object.
-
-				int i = 0;
-				while (Physics.CheckSphere(transform.position, 1) && i < 1000)
-				{
-					// Spawn offscreen and shoot towards where the player is right now.
-					transform.position = m_MainCamera.ScreenToWorldPoint(new Vector3(GetRandomSpawnPosition(true), GetRandomSpawnPosition(false), m_SpawnPosHeight), m_MainCamera.stereoActiveEye);
-					++i;
-				}
-
-
-				transform.LookAt(m_PlayerTransform);
-				m_Rigid.velocity = transform.forward * m_Speed;
-				m_Fired = true;
-
-				m_SpawnTimer += m_MaxSpawnTimer;
-			}
-			// Decrease timer.
-			else
-				m_SpawnTimer -= Time.deltaTime;
-		}
+			SpawnTimer -= Time.deltaTime;
     }
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		// If the frisbee hits something, fall down.
-		m_Rigid.useGravity = true;
+		if(collision.transform.tag == "Bidge"){
+			BidgeBehaviour b = collision.gameObject.GetComponent<BidgeBehaviour>();
+			b.StopChasing();
+		}
+		// Clean up to make frisbee Collision look a bit better
+		rb.useGravity = true;
 	}
 
-	private float GetRandomSpawnPosition(bool isXAxis)
-	{
-		// Randomly spawn on the left or right/top or bottom.
-		m_RandomSpawn = Random.Range(0, 2);
+	private Vector3 GetRandomSpawnPosition(int offset){
+		
+		int x = (Random.Range(0, 1) == 1) ? Random.Range(-offset, 0) : Random.Range(Screen.width, Screen.width + offset);
+		int y = (Random.Range(0, 1) == 1) ? Random.Range(-offset, 0) : Random.Range(Screen.height, Screen.height + offset);
 
-		// Spawn right/top.
-		if (m_RandomSpawn == 1)
-		{
-			if (isXAxis)
-				return 1.1f;
-			else
-				return Random.Range(1.1f, 1.9f);
+
+		Ray ray = MainCamera.ScreenPointToRay(new Vector3(x, y, 0));
+
+		Plane hPlane = new Plane(Vector3.up, Vector3.zero);
+		float distance = 0; 
+		if (hPlane.Raycast(ray, out distance)){
+			return ray.GetPoint(distance);
 		}
 
-		// Spawn left/bottom.
-		else
-		{
-			if (isXAxis)
-				return -0.1f;
-			else
-				return Random.Range(-0.9f, -0.1f);
-		}
+		return Vector2.zero;
 	}
 
 	public bool GetFired()
