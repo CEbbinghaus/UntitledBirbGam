@@ -11,15 +11,15 @@ internal class Spawning : Singleton<Spawning>
 	float Delay = 20.0f;
 	float time = 0;
 
-	Spawnable toBeSpawned;
+	Food toBeSpawned;
 
 	[Range(0, 1)]
 	[SerializeField]
 	float PercentageSpawn = 0.3f;
 
 	[SerializeField]
-	List<Spawnable> spawnables;
-	List<Spawnable> despawned;
+	List<Food> spawnables;
+	List<Food> despawned;
 
 	void Awake()
 	{
@@ -29,17 +29,17 @@ internal class Spawning : Singleton<Spawning>
 			RegisterInstance(this);
 
 		GameObject.DontDestroyOnLoad(this);
-		spawnables = new List<Spawnable>((Spawnable[])Resources.FindObjectsOfTypeAll(typeof(Spawnable)));
+		spawnables = new List<Food>((Food[])Resources.FindObjectsOfTypeAll(typeof(Food)));
 		SceneManager.sceneLoaded += Util.WrapSceneLoadedEvent(SceneChanged);
 	}
 
 	private void SceneChanged()
 	{
-		spawnables = new List<Spawnable>((Spawnable[])Resources.FindObjectsOfTypeAll(typeof(Spawnable)));
+		spawnables = new List<Food>((Food[])Resources.FindObjectsOfTypeAll(typeof(Food)));
 		if (despawned != null)
 			despawned.Clear();
 
-		foreach (Spawnable spawn in spawnables)
+		foreach (Food spawn in spawnables)
 		{
 			if (Random.Range(0f, 1f) > PercentageSpawn)
 				gameObject.SetActive(false);
@@ -51,7 +51,7 @@ internal class Spawning : Singleton<Spawning>
 		Spawning instance = GetInstance();
 		if (!instance)return;
 
-		instance.despawned = instance.spawnables.Where((Spawnable s) =>
+		instance.despawned = instance.spawnables.Where((Food s) =>
 		{
 			return s != null && !s.gameObject.activeSelf;
 		}).ToList();
