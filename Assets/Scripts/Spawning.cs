@@ -23,10 +23,7 @@ internal class Spawning : Singleton<Spawning>
 
 	void Awake()
 	{
-		if (GetInstance() != null)
-			Destroy(this.gameObject);
-		else
-			RegisterInstance(this);
+		RegisterInstance(this, true);
 
 		GameObject.DontDestroyOnLoad(this);
 		spawnables = new List<Food>((Food[])Resources.FindObjectsOfTypeAll(typeof(Food)));

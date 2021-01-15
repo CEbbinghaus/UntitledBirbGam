@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class ChangeScene : MonoBehaviour
 {
@@ -33,10 +32,6 @@ public class ChangeScene : MonoBehaviour
 		StartCoroutine(FadeOut(1f, canvasGroup.alpha, 1));
 	}
 
-	public void ReloadScene()
-	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-	}
 	public void endGame()
 	{
 		Application.Quit();
@@ -58,6 +53,6 @@ public class ChangeScene : MonoBehaviour
 			canvasGroup.alpha = currentValue;
 			yield return new WaitForEndOfFrame();
 		}
-		SceneManager.LoadScene("Main", LoadSceneMode.Single);
+		UnityEngine.SceneManagement.SceneManager.LoadScene("Main", LoadSceneMode.Single);
 	}
 }

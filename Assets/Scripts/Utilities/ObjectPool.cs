@@ -13,11 +13,23 @@ internal interface IPoolable
 	void OnDeactivate();
 }
 
+public class ObjectPool
+{
+	public static Func<T> GetGenerator<T>(GameObject prefab)
+	{
+		return () =>
+		{
+			var gm = GameObject.Instantiate(prefab);
+			return gm.GetComponent<T>();
+		};
+	}
+}
+
 /// <summary>
 /// Object pool to Reuse Objects that respawn
 /// </summary>
 /// <typeparam name="T">Object Type to Reuse</typeparam>
-public class ObjectPool<T> where T : MonoBehaviour
+public class ObjectPool<T> : ObjectPool where T : Component
 {
 	Func<T> generator;
 	List<T> pool = new List<T>();

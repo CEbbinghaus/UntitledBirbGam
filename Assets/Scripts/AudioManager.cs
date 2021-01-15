@@ -3,9 +3,44 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoBehaviour
+internal class AudioManager : EntityPoolManager<string, AudioInstance>
 {
-	public enum Event
+
+	ObjectPool<AudioInstance> instances;
+
+	new void Awake()
+	{
+		print("Testing");
+		base.Awake();
+		Initialize();
+	}
+
+	void Initialize()
+	{
+		AudioInstance[] instances = Resources.LoadAll<AudioInstance>("Audio/Sources");
+
+		foreach (AudioInstance instance in instances)
+		{
+			RegisterEntityPrefab(instance.GetType(), instance.gameObject);
+		}
+	}
+
+	public static AudioInstance PlaySound(AudioInstance sound, Vector3 position)
+	{
+		AudioInstance instance = GetObject(sound.GetType());
+		instance.transform.position = position;
+		return instance;
+	}
+	public static AudioInstance PlaySound(string name, Vector3 position)
+	{
+		AudioInstance instance = GetObject(name);
+		instance.transform.position = position;
+		return instance;
+	}
+}
+
+/*
+	internal enum Event
 	{
 		Chase,
 		SmallPickup,
@@ -13,57 +48,64 @@ public class AudioManager : MonoBehaviour
 		Score
 	}
 
-	public AudioClip BackgroundSound;
-	[Range(0, 1)]
-	public float BackgroundVolume = 1.0f;
+	[SerializeField]
+	GameObject AudioSourcePrefab;
 
-	public AudioClip ChaseSound;
-	[Range(0, 1)]
-	public float ChaseVolume = 1.0f;
+	[Header("Audio Clips")]
 
-	public AudioClip SeedSound;
-	[Range(0, 1)]
-	public float SeedVolume = 1.0f;
+	[SerializeField]
+	AudioClip BackgroundSound;
+	[Range(0, 1)][SerializeField]
+	float BackgroundVolume = 1.0f;
 
-	public AudioClip SandwitchSound;
-	[Range(0, 1)]
-	public float SandwitchVolume = 1.0f;
+	[SerializeField]
+	AudioClip ChaseSound;
+	[Range(0, 1)][SerializeField]
+	float ChaseVolume = 1.0f;
 
-	public AudioClip ScoreSound;
-	[Range(0, 1)]
-	public float ScoreVolume = 1.0f;
+	[SerializeField]
+	AudioClip SeedSound;
+	[Range(0, 1)][SerializeField]
+	float SeedVolume = 1.0f;
+
+	[SerializeField]
+	AudioClip SandwitchSound;
+	[Range(0, 1)][SerializeField]
+	float SandwitchVolume = 1.0f;
+
+	[SerializeField]
+	AudioClip ScoreSound;
+	[Range(0, 1)][SerializeField]
+	float ScoreVolume = 1.0f;
+
+	ObjectPool<AudioSource> SourcePool = new ObjectPool<AudioSource>();
 
 	string[] names = { "Background", "Chase", "Seed", "Sandwitch", "Score" };
 
-	public List<AudioSource> sources;
-
-	public static AudioManager instance;
+	AudioSource[] sources;
 
 	void Awake()
 	{
-		if (instance != null && instance != this)
+		Transform noDestroy = this.transform.parent;
+
+		if (noDestroy == null)
+			noDestroy = transform;
+
+		DontDestroyOnLoad(noDestroy);
+
+		if (GetInstance() != this)
 		{
 			Destroy(this.gameObject);
+			return;
 		}
-		else
-		{
-			instance = this;
-		}
+		RegisterInstance(this);
 
-		QualitySettings.vSyncCount = 1;
-		Application.targetFrameRate = 60;
+		SourcePool.Initialize(ObjectPool.GetGenerator<AudioSource>(AudioSourcePrefab), (uint)names.Length);
 
-		sources = new List<AudioSource>();
-
-		// System.Type t = typeof(AudioManager);
-		// PropertyInfo[] properties = t.GetFields();
-
-		// foreach(PropertyInfo pI in properties) {
-		//   Debug.Log(pI.Name + ": " + pI.GetValue(this));
-		//   //This returns the value cast (or boxed) to object so you will need to cast it to some other type to find its value.
-		// }
+		sources = new AudioSource[names.Length];
 
 		System.Type t = typeof(AudioManager);
+		int i = 0;
 		foreach (var name in names)
 		{
 			var src = gameObject.AddComponent<AudioSource>();
@@ -79,17 +121,14 @@ public class AudioManager : MonoBehaviour
 				src.loop = true;
 				src.Play();
 			}
-			sources.Add(src);
+			sources[i++] = src;
 		}
 	}
 
 	public static void Emit(Event e)
 	{
-		if (!instance)
-		{
-			Debug.LogError("No Instance of AudioManager Exists");
-			return;
-		}
+		var instance = GetInstance();
+		if (!instance)return;
 
 		AudioSource src = instance.sources[(int)e + 1];
 
@@ -98,12 +137,8 @@ public class AudioManager : MonoBehaviour
 
 	public static AudioSource GetSource(Event e)
 	{
-		if (!instance)
-		{
-			Debug.LogError("No Instance of AudioManager Exists");
-			return null;
-		}
-
+		var instance = GetInstance();
+		if (!instance)return null;
 		return instance.sources[(int)e + 1];
 	}
-}
+*/

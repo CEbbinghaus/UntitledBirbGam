@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CustomSceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ReturnToMenu : MonoBehaviour
 {
 	public void LoadMainMenu()
 	{
-		SceneManager.LoadScene(0);
+		SceneManager.LoadSceneById(0);
 	}
 }

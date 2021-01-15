@@ -23,7 +23,7 @@ public abstract class PooledObject<T> : MonoBehaviour, IPoolable, IInitializable
 
 	public void Initialize(GameObject obj, uint amount) //Func<T> generator, uint amount
 	{
-		pool.Initialize(GetGenerator(obj), amount);
+		pool.Initialize(ObjectPool.GetGenerator<T>(obj), amount);
 	}
 
 	public static bool ObjectExists(T obj)
@@ -50,14 +50,5 @@ public abstract class PooledObject<T> : MonoBehaviour, IPoolable, IInitializable
 	public void RemoveInstanceObject()
 	{
 		pool.RetireObject((T)this);
-	}
-
-	protected static Func<T> GetGenerator(GameObject prefab)
-	{
-		return () =>
-		{
-			var gm = Instantiate(prefab);
-			return gm.GetComponent<T>();
-		};
 	}
 }
