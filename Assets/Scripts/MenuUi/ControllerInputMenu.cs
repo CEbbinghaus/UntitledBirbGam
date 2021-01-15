@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-public enum MenuState
-{
+public enum MenuState 
+{ 
     Null,
     Menu,
     SubMenu
 }
 
-public class MenuControllerInput : MonoBehaviour
+public class ControllerInputMenu : MonoBehaviour
 {
-    public static MenuControllerInput instance;
+    public static ControllerInputMenu instance;
 
     public MenuState menuState = MenuState.Menu;
     [HideInInspector]
@@ -22,7 +20,7 @@ public class MenuControllerInput : MonoBehaviour
     public float holdDelay = 0.5f;
     public float sensitivity = 0.3f;
     float timer = 0;
-    List<MenuButton> menuButtons = new List<MenuButton>();
+    List<ControllerButton> menuButtons = new List<ControllerButton>();
     int currentIndex = -1;
 
     private void Awake()
@@ -42,7 +40,7 @@ public class MenuControllerInput : MonoBehaviour
         int setIndex = 0;
         foreach (Transform child in transform)
         {
-            MenuButton button = child.GetComponent<MenuButton>();
+            ControllerButton button = child.GetComponent<ControllerButton>();
             if (button)
             {
                 button.index = setIndex;
@@ -67,8 +65,14 @@ public class MenuControllerInput : MonoBehaviour
                 // Pressing the button
                 if (Input.GetButtonDown("Submit"))
                 {
-                    menuButtons[currentIndex].Press();
-                    EventSystem.current.SetSelectedGameObject(null);
+                    if (currentIndex >= 0)
+                    {
+                        menuButtons[currentIndex].Press();
+                    }
+                    else
+                    {
+                        SetHoverButton(0);
+                    }
                 }
 
                 // Joystick is at rest, reset the timer
@@ -117,14 +121,14 @@ public class MenuControllerInput : MonoBehaviour
         timer = holdDelay;
     }
 
-    public void SetHoverButton(MenuButton button)
+    public void SetHoverButton(ControllerButton button)
     {
         currentIndex = button.index;
         menuButtons[currentIndex].button.Select();
         timer = holdDelay;
     }
 
-    public void CancelControllerInput(MenuButton button)
+    public void CancelControllerInput(ControllerButton button)
     {
         if (button == null || currentIndex == button.index)
         {
@@ -137,6 +141,7 @@ public class MenuControllerInput : MonoBehaviour
     {
         activeSubMenu.SetActive(false);
         activeSubMenu = null;
+        SetHoverButton(currentIndex);
         menuState = MenuState.Menu;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public abstract class MenuButton : EventTrigger
+public abstract class ControllerButton : EventTrigger
 {
 	[HideInInspector]
 	public int index;
@@ -18,17 +18,20 @@ public abstract class MenuButton : EventTrigger
 		button.onClick.AddListener(Press);
 	}
 
-	public abstract void Press();
+	public virtual void Press()
+	{
+		EventSystem.current.SetSelectedGameObject(null);
+	}
 
 	public override void OnPointerEnter(PointerEventData eventData)
 	{
 		base.OnPointerEnter(eventData);
-		MenuControllerInput.instance.SetHoverButton(this);
+		ControllerInputMenu.instance.SetHoverButton(this);
 	}
 
 	public override void OnPointerExit(PointerEventData eventData)
 	{
 		base.OnPointerExit(eventData);
-		MenuControllerInput.instance.CancelControllerInput(this);
+		ControllerInputMenu.instance.CancelControllerInput(this);
 	}
 }

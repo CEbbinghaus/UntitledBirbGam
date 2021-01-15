@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuitControllerButton : MenuButton
+public class ControllerButtonQuit : ControllerButton
 {
 	public override void Press()
 	{
+		base.Press();
 		Application.Quit();
-		MenuControllerInput.instance.menuState = MenuState.Null;
+		ControllerInputMenu.instance.menuState = MenuState.Null;
 	}
 }
