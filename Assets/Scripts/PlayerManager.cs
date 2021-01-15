@@ -61,6 +61,15 @@ public class PlayerManager : MonoBehaviour
 	[SerializeField]
 	FoodHolder seedHolder;
 
+	[SerializeField]
+	AudioInstance SeedPickupSound;
+
+	[SerializeField]
+	AudioInstance SandwichPickupSound;
+
+	[SerializeField]
+	AudioInstance ScoreSound;
+
 	int seeds, sandwiches;
 
 	void Awake()
@@ -79,7 +88,7 @@ public class PlayerManager : MonoBehaviour
 			m_Score += m_FoodCollected;
 
 			if (m_FoodCollected > 0)
-				AudioManager.Emit(AudioManager.Event.Score);
+				AudioManager.PlaySound(ScoreSound, Vector3.zero);
 
 			Spawning.RefreshSpawned();
 
@@ -104,7 +113,7 @@ public class PlayerManager : MonoBehaviour
 		{
 			case "Seed":
 				m_FoodCollected++;
-				AudioManager.Emit(AudioManager.Event.SmallPickup);
+				AudioManager.PlaySound(SeedPickupSound, Vector3.zero);
 
 				seeds++;
 				other.gameObject.SetActive(false);
@@ -113,7 +122,7 @@ public class PlayerManager : MonoBehaviour
 				break;
 			case "Sandwich":
 				m_FoodCollected += m_SandwichPoints;
-				AudioManager.Emit(AudioManager.Event.BigPickup);
+				AudioManager.PlaySound(SandwichPickupSound, Vector3.zero);
 
 				sandwiches++;
 				other.gameObject.SetActive(false);

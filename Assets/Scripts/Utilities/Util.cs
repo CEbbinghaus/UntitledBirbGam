@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public static partial class Util
+public static class Util
 {
 	public static void WaitCoroutine(IEnumerator func)
 	{
@@ -52,6 +52,7 @@ public static partial class Util
 	{
 		return (UnityEngine.SceneManagement.Scene a, UnityEngine.SceneManagement.Scene b) => function();
 	}
+
 	public static UnityEngine.Events.UnityAction<UnityEngine.SceneManagement.Scene, UnityEngine.SceneManagement.LoadSceneMode> WrapSceneLoadedEvent(Action function)
 	{
 		return (UnityEngine.SceneManagement.Scene a, UnityEngine.SceneManagement.LoadSceneMode b) => function();

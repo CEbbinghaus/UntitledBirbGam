@@ -54,12 +54,13 @@ public class BidgeBehaviour : MonoBehaviour
 	/// </summary>
 	void Start()
 	{
-		src = AudioManager.GetSource(AudioManager.Event.Chase);
-		bgVolume = AudioManager.instance.BackgroundVolume;
-		bgsrc = AudioManager.instance.sources[0];
 		m_Agent = GetComponent<NavMeshAgent>();
 		m_NavPath = new NavMeshPath();
 		cachedYHeight = transform.position.y;
+		//TODO: Fix when Audio Manager has been reworked
+		// src = AudioManager.GetSource(AudioManager.Event.Chase);
+		// bgsrc = AudioManager.instance.sources[0];
+		// bgVolume = AudioManager.instance.BackgroundVolume;
 	}
 
 	public void StopChasing()
@@ -103,8 +104,9 @@ public class BidgeBehaviour : MonoBehaviour
 				fadeTimer -= Time.fixedDeltaTime / fadeDuration;
 		}
 
-		src.volume = Mathf.Lerp(ChaseVolume, 0, fadeTimer);
-		bgsrc.volume = Mathf.Lerp(bgVolume, 0, 1 - fadeTimer);
+		//TODO: Fix once audio manager is working
+		// src.volume = Mathf.Lerp(ChaseVolume, 0, fadeTimer);
+		// bgsrc.volume = Mathf.Lerp(bgVolume, 0, 1 - fadeTimer);
 	}
 
 	private bool inViewCone()
@@ -116,7 +118,7 @@ public class BidgeBehaviour : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(transform.position, diff, out hit, ViewDistance))
 			{
-				return (hit.transform.gameObject.tag == "Player");
+				return hit.transform.gameObject.CompareTag("Player");
 			}
 			else
 			{

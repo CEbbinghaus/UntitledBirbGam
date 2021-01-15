@@ -15,6 +15,23 @@ public class ShuffleBag<T>
 	uint itemIndex;
 	bool empty = false;
 
+	static class Util
+	{
+		public static void Swap(ref object a, ref object b)
+		{
+			object c = a;
+			a = b;
+			b = c;
+		}
+
+		public static void Swap<T>(ref T a, ref T b)
+		{
+			T c = a;
+			a = b;
+			b = c;
+		}
+	}
+
 	public bool Empty
 	{
 		get
@@ -73,22 +90,5 @@ public class ShuffleBag<T>
 		{
 			Util.Swap(ref items[i], ref items[UnityEngine.Random.Range(0, (int)itemIndex - 1)]);
 		}
-	}
-}
-
-public static partial class Util
-{
-	public static void Swap(ref object a, ref object b)
-	{
-		object c = a;
-		a = b;
-		b = c;
-	}
-
-	public static void Swap<T>(ref T a, ref T b)
-	{
-		T c = a;
-		a = b;
-		b = c;
 	}
 }
