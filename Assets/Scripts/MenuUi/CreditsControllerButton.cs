@@ -8,6 +8,8 @@ public class CreditsControllerButton : MenuButton
 
 	public override void Press()
 	{
+		MenuControllerInput.instance.activeSubMenu = creditsObject;
 		creditsObject.SetActive(true);
+		MenuControllerInput.instance.menuState = MenuState.SubMenu;
 	}
 }

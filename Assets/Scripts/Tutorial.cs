@@ -33,7 +33,7 @@ public class Tutorial : MonoBehaviour
 
 	void Awake()
 	{
-		if (m_Camera == null)
+		if (m_TutorialCamera == null)
 			m_TutorialCamera = GetComponent<Camera>();
 	}
 

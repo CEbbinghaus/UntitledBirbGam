@@ -30,5 +30,6 @@ public class StartControllerButton : MenuButton
 	{
 		Time.timeScale = 1;
 		StartCoroutine(FadeOut(1f, canvasGroup.alpha, 1));
+		MenuControllerInput.instance.menuState = MenuState.Null;
 	}
 }
