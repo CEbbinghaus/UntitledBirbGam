@@ -156,6 +156,7 @@ public class BidgeBehaviour : MonoBehaviour
 	{
 		if (m_DeaggroTimer <= 0.0f && inViewCone())
 		{
+			AudioManager.PlaySound("BidgeScream", transform.position);
 			state = BidgeState.Chasing;
 			m_Agent.destination = target.position;
 			return;

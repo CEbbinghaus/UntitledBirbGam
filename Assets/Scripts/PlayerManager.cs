@@ -176,6 +176,7 @@ public class PlayerManager : MonoBehaviour
 
 				m_Lives--;
 				m_LifeGraphics[m_Lives].enabled = false;
+				AudioManager.PlaySound("WillHit", transform.position);
 				break;
 		}
 

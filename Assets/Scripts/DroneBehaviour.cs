@@ -91,8 +91,8 @@ public class DroneBehaviour : MonoBehaviour
 				lastTarget = target;
 				target = null;
 				timer = UnityEngine.Random.Range(RamdomWaitTime.x, RamdomWaitTime.y);
+
 			}
-			//transform.rotation =
 
 		}
 		else
