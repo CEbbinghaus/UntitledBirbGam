@@ -19,7 +19,8 @@ public class DroneMap
 				// If the source and target are the same, or they already appear on each other's lists, continue
 				if (sourceWaypoint == targetWaypoint ||
 					sourceWaypoint.visibleWaypoints.Contains(targetWaypoint) ||
-					targetWaypoint.visibleWaypoints.Contains(sourceWaypoint))
+					targetWaypoint.visibleWaypoints.Contains(sourceWaypoint) || 
+					Vector3.Distance(sourceWaypoint.transform.position, targetWaypoint.transform.position) > 15)
 					continue;
 
 				if (Physics.Linecast(sourceWaypoint.transform.position, targetWaypoint.transform.position, out RaycastHit hit))
@@ -29,6 +30,10 @@ public class DroneMap
 						sourceWaypoint.visibleWaypoints.Add(targetWaypoint);
 						targetWaypoint.visibleWaypoints.Add(sourceWaypoint);
 						Debug.DrawLine(sourceWaypoint.transform.position, targetWaypoint.transform.position, Color.green, 5f);
+					}
+					else
+					{
+						Debug.DrawLine(sourceWaypoint.transform.position, targetWaypoint.transform.position, Color.red, 5f);
 					}
 				}
 				else
@@ -50,7 +55,7 @@ public class DroneMap
 		{
 			foreach (DroneWaypoint waypoint1 in waypoint.visibleWaypoints)
 			{
-				Debug.DrawLine(waypoint.transform.position, waypoint1.transform.position, Color.white, 15f);
+				Debug.DrawLine(waypoint.transform.position, waypoint1.transform.position, Color.white, 20f);
 			}
 		}
 	}
