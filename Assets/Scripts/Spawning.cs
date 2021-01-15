@@ -25,7 +25,8 @@ internal class Spawning : Singleton<Spawning>
 	{
 		RegisterInstance(this, true);
 
-		GameObject.DontDestroyOnLoad(this);
+		DontDestroyOnLoad(this.transform);
+
 		spawnables = new List<Food>((Food[])Resources.FindObjectsOfTypeAll(typeof(Food)));
 		SceneManager.sceneLoaded += Util.WrapSceneLoadedEvent(SceneChanged);
 	}
@@ -57,6 +58,7 @@ internal class Spawning : Singleton<Spawning>
 	void Update()
 	{
 		if (spawnables.Count <= 0)return;
+
 		if (toBeSpawned != null && time > 0)
 		{
 			time -= Time.deltaTime;

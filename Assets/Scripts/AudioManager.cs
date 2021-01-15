@@ -8,6 +8,28 @@ internal class AudioManager : EntityPoolManager<string, AudioInstance>
 
 	ObjectPool<AudioInstance> instances;
 
+	[SerializeField]
+	float FadeTime = 5.0f;
+
+	[SerializeField,
+		Range(0, 1)
+	]
+	float MusicVolume = 0.5f;
+
+	[SerializeField]
+	AudioSource ChaseMusic;
+	[SerializeField]
+	AudioSource IdleMusic;
+
+	[SerializeField]
+	public bool IsChasing = false;
+	float fadeAmount = 0.0f;
+
+	public static void SetChasing(bool chasing)
+	{
+		((AudioManager)GetInstance()).IsChasing = chasing;
+	}
+
 	new void Awake()
 	{
 		print("Testing");
@@ -31,11 +53,25 @@ internal class AudioManager : EntityPoolManager<string, AudioInstance>
 		instance.transform.position = position;
 		return instance;
 	}
+
 	public static AudioInstance PlaySound(string name, Vector3 position)
 	{
 		AudioInstance instance = GetObject(name);
 		instance.transform.position = position;
 		return instance;
+	}
+
+	void Update()
+	{
+		if (IsChasing)
+			fadeAmount += Time.deltaTime / FadeTime;
+		else
+			fadeAmount -= Time.deltaTime / FadeTime;
+
+		fadeAmount = Mathf.Clamp(fadeAmount, 0, MusicVolume);
+
+		ChaseMusic.volume = fadeAmount;
+		IdleMusic.volume = MusicVolume - fadeAmount;
 	}
 }
 

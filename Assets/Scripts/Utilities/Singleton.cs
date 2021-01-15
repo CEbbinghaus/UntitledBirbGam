@@ -20,7 +20,7 @@ internal class Singleton<T> : MonoBehaviour where T : Object
 			return;
 		}
 
-		if (Singleton<T>.instance != null || Singleton<T>.instance == instance)
+		if (Singleton<T>.instance == null || Singleton<T>.instance == instance)
 			Singleton<T>.instance = instance;
 		else
 		{
