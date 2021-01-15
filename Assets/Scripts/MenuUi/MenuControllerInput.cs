@@ -68,6 +68,7 @@ public class MenuControllerInput : MonoBehaviour
                 if (Input.GetButtonDown("Submit"))
                 {
                     menuButtons[currentIndex].Press();
+                    EventSystem.current.SetSelectedGameObject(null);
                 }
 
                 // Joystick is at rest, reset the timer
@@ -101,11 +102,9 @@ public class MenuControllerInput : MonoBehaviour
                 break;
             #endregion
             case MenuState.SubMenu:
-                if (Input.GetButtonDown("Cancel"))
+                if (Input.GetButtonUp("Cancel"))
                 {
-                    activeSubMenu.SetActive(false);
-                    activeSubMenu = null;
-                    menuState = MenuState.Menu;
+                    ExitSubMenu();
                 }
                 break;
         }
@@ -127,10 +126,17 @@ public class MenuControllerInput : MonoBehaviour
 
     public void CancelControllerInput(MenuButton button)
     {
-        if (button == null | currentIndex == button.index)
+        if (button == null || currentIndex == button.index)
         {
             EventSystem.current.SetSelectedGameObject(null);
             currentIndex = -1;
         }
+    }
+
+    public void ExitSubMenu()
+    {
+        activeSubMenu.SetActive(false);
+        activeSubMenu = null;
+        menuState = MenuState.Menu;
     }
 }

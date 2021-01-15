@@ -51,7 +51,7 @@ public class Tutorial : MonoBehaviour
 	{
 		if (m_InTutorial)
 		{
-			if (Input.GetButtonDown("Submit"))
+			if (Input.GetButtonDown("Submit") || Input.GetMouseButtonDown(0))
 			{
 				m_CurrentIndex++;
 				m_TextPromptDisplay.text = m_TextPrompts[m_CurrentIndex];

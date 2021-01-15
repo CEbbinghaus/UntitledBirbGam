@@ -15,6 +15,7 @@ public abstract class MenuButton : EventTrigger
 	{
 		button = GetComponent<Button>();
 		button.targetGraphic.color = button.colors.normalColor;
+		button.onClick.AddListener(Press);
 	}
 
 	public abstract void Press();
