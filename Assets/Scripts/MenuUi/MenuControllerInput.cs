@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum MenuState
@@ -37,7 +39,17 @@ public class MenuControllerInput : MonoBehaviour
 
     private void Start()
     {
-        menuButtons = FindObjectsOfType<MenuButton>().OrderBy(mb => mb.index).ToList();
+        int setIndex = 0;
+        foreach (Transform child in transform)
+        {
+            MenuButton button = child.GetComponent<MenuButton>();
+            if (button)
+            {
+                button.index = setIndex;
+                menuButtons.Add(button);
+                setIndex++;
+            }
+        }
     }
 
     void Update()
@@ -45,11 +57,11 @@ public class MenuControllerInput : MonoBehaviour
         switch (menuState)
         {
             case MenuState.Menu:
-				#region Menu
-				// -1 index is if mouse is currently being used
-				if (Input.GetMouseButtonDown(0))
+                #region Menu
+                // -1 index is if mouse is currently being used
+                if (Input.GetMouseButtonDown(0))
                 {
-                    CancelControllerInput();
+                    CancelControllerInput(null);
                 }
 
                 // Pressing the button
@@ -67,35 +79,17 @@ public class MenuControllerInput : MonoBehaviour
                 // Changing selected button if the joystick was previously at rest
                 if (timer == 0)
                 {
+                    // Move Up
                     if (Input.GetAxis("Vertical") > sensitivity)
                     {
-                        if (currentIndex == -1)
-                        {
-                            SetInitialButton();
-                            return;
-                        }
-                        Button currentButton = menuButtons[currentIndex].button;
-                        currentButton.targetGraphic.color = currentButton.colors.normalColor;
-                        currentIndex = (currentIndex + menuButtons.Count - 1) % menuButtons.Count;
-                        Button newButton = menuButtons[currentIndex].button;
-                        newButton.targetGraphic.color = newButton.colors.highlightedColor;
-                        timer = holdDelay;
+                        SetHoverButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count - 1) % menuButtons.Count);
                         return;
                     }
 
+                    // Move down
                     if (Input.GetAxis("Vertical") < -sensitivity)
                     {
-                        if (currentIndex == -1)
-                        {
-                            SetInitialButton();
-                            return;
-                        }
-                        Button currentButton = menuButtons[currentIndex].button;
-                        currentButton.targetGraphic.color = currentButton.colors.normalColor;
-                        currentIndex = (currentIndex + menuButtons.Count + 1) % menuButtons.Count;
-                        Button newButton = menuButtons[currentIndex].button;
-                        newButton.targetGraphic.color = newButton.colors.highlightedColor;
-                        timer = holdDelay;
+                        SetHoverButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count + 1) % menuButtons.Count);
                         return;
                     }
                 }
@@ -105,8 +99,8 @@ public class MenuControllerInput : MonoBehaviour
                     timer = Mathf.Max(0, timer -= Time.deltaTime);
                 }
                 break;
-			#endregion
-			case MenuState.SubMenu:
+            #endregion
+            case MenuState.SubMenu:
                 if (Input.GetButtonDown("Cancel"))
                 {
                     activeSubMenu.SetActive(false);
@@ -117,17 +111,26 @@ public class MenuControllerInput : MonoBehaviour
         }
     }
 
-    void SetInitialButton()
+    public void SetHoverButton(int index)
     {
-        Button button = menuButtons[0].button;
-        button.targetGraphic.color = button.colors.highlightedColor;
-        currentIndex = 0;
+        currentIndex = index;
+        menuButtons[currentIndex].button.Select();
         timer = holdDelay;
     }
 
-    public void CancelControllerInput()
+    public void SetHoverButton(MenuButton button)
     {
-        menuButtons.ForEach(b => b.button.targetGraphic.color = b.button.colors.normalColor);
-        currentIndex = -1;
+        currentIndex = button.index;
+        menuButtons[currentIndex].button.Select();
+        timer = holdDelay;
+    }
+
+    public void CancelControllerInput(MenuButton button)
+    {
+        if (button == null | currentIndex == button.index)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            currentIndex = -1;
+        }
     }
 }
