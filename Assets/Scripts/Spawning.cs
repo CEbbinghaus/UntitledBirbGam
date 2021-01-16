@@ -25,29 +25,33 @@ internal class Spawning : Singleton<Spawning>
 	{
 		RegisterInstance(this, true);
 
-		DontDestroyOnLoad(this.transform);
+		DontDestroyOnLoad(this.gameObject);
 
-		spawnables = new List<Food>((Food[])Resources.FindObjectsOfTypeAll(typeof(Food)));
+		spawnables = new List<Food>(Resources.FindObjectsOfTypeAll<Food>());
 		SceneManager.sceneLoaded += Util.WrapSceneLoadedEvent(SceneChanged);
 	}
 
 	private void SceneChanged()
 	{
-		spawnables = new List<Food>((Food[])Resources.FindObjectsOfTypeAll(typeof(Food)));
+		spawnables = new List<Food>(Resources.FindObjectsOfTypeAll<Food>());
 		if (despawned != null)
 			despawned.Clear();
 
 		foreach (Food spawn in spawnables)
 		{
 			if (Random.Range(0f, 1f) > PercentageSpawn)
-				gameObject.SetActive(false);
+				spawn.gameObject.SetActive(false);
 		}
 	}
 
 	public static void RefreshSpawned()
 	{
 		Spawning instance = GetInstance();
-		if (!instance)return;
+		if (!instance)
+		{
+			Debug.LogError("No Instance of Spawning found");
+			return;
+		}
 
 		instance.despawned = instance.spawnables.Where((Food s) =>
 		{
@@ -66,6 +70,7 @@ internal class Spawning : Singleton<Spawning>
 		}
 		else if (toBeSpawned != null && time <= 0)
 		{
+			Debug.Log("Spawned: " + toBeSpawned.ToString());
 			toBeSpawned.gameObject.SetActive(true);
 			toBeSpawned = null;
 			return;

@@ -145,7 +145,10 @@ public class PlayerManager : MonoBehaviour
 		}
 		if (collected < 5)
 		{
-			holder.food[collected - 1].gameObject.SetActive(true);
+			for (int i = 1; i < 5; i++)
+			{
+				holder.food[collected - 1].gameObject.SetActive(true);
+			}
 		}
 		else
 		{

@@ -52,24 +52,29 @@ public class PlayerMovement : MonoBehaviour
 	/// </summary>
 	public float m_EncumbranceModifier = 10.0f;
 
-	/// <summary>
-	/// On startup.
-	/// </summary>
+	[SerializeField]
+	bl_Joystick joystick;
+
 	void Awake()
 	{
 		// Get the rigidbody.
 		m_Rigid = GetComponent<Rigidbody>();
 
 		m_PM = GetComponent<PlayerManager>();
+
+		if (joystick == null)
+			Debug.LogWarning("Joystick needs to be assigned for mobile to work");
+
 	}
 
-	/// <summary>
-	/// Update.
-	/// </summary>
 	void Update()
 	{
+		Vector3 playerDir = Vector3.forward;
 
-		Vector3 playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+		if (joystick != null && Application.isMobilePlatform)
+			playerDir = new Vector3(joystick.Horizontal, 0, joystick.Vertical).normalized;
+		else
+			playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
 		m_movementDirection = Vector3.Lerp(m_movementDirection, playerDir, Time.deltaTime * m_RotSpeed);
 
@@ -84,9 +89,6 @@ public class PlayerMovement : MonoBehaviour
 		transform.LookAt(transform.position + nvel, Vector3.up);
 	}
 
-	/// <summary>
-	/// Physics update.
-	/// </summary>
 	private void FixedUpdate()
 	{
 		if (float.IsNaN(transform.position.x) || float.IsNaN(transform.position.y) || float.IsNaN(transform.position.z))return;
