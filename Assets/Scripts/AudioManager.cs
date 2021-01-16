@@ -25,6 +25,8 @@ internal class AudioManager : EntityPoolManager<string, AudioInstance>
 	public bool IsChasing = false;
 	float fadeAmount = 0.0f;
 
+	bool errorSkip;
+
 	public static void SetChasing(bool chasing)
 	{
 		((AudioManager)GetInstance()).IsChasing = chasing;
@@ -35,6 +37,11 @@ internal class AudioManager : EntityPoolManager<string, AudioInstance>
 		print("Testing");
 		base.Awake();
 		Initialize();
+		if (!(ChaseMusic && IdleMusic))
+		{
+			errorSkip = true;
+			Debug.LogError("Missing a music track", this);
+		}
 	}
 
 	void Initialize()
@@ -63,15 +70,18 @@ internal class AudioManager : EntityPoolManager<string, AudioInstance>
 
 	void Update()
 	{
-		if (IsChasing)
-			fadeAmount += Time.deltaTime / FadeTime;
-		else
-			fadeAmount -= Time.deltaTime / FadeTime;
+		if (!errorSkip)
+		{
+			if (IsChasing)
+				fadeAmount += Time.deltaTime / FadeTime;
+			else
+				fadeAmount -= Time.deltaTime / FadeTime;
 
-		fadeAmount = Mathf.Clamp(fadeAmount, 0, MusicVolume);
+			fadeAmount = Mathf.Clamp(fadeAmount, 0, MusicVolume);
 
-		ChaseMusic.volume = fadeAmount;
-		IdleMusic.volume = MusicVolume - fadeAmount;
+			ChaseMusic.volume = fadeAmount;
+			IdleMusic.volume = MusicVolume - fadeAmount;
+		}
 	}
 }
 
