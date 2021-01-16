@@ -30,4 +30,9 @@ internal class Singleton<T> : MonoBehaviour where T : Object
 				Debug.LogErrorFormat("A Instance of {0} Already Exists", typeof(T).Name);
 		}
 	}
+
+	protected void RegisterInstanceOverwrite(T instance)
+	{
+		Singleton<T>.instance = instance;
+	}
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using CustomSceneManagement;
 using UnityEngine;
-using UnityEngine.XR;
 
 public class SplashScene : MonoBehaviour
 {
@@ -18,10 +17,6 @@ public class SplashScene : MonoBehaviour
 	[SerializeField]
 	[Tooltip("Root Object to attach everything to. Stays active throughout the entire game")]
 	Transform root;
-
-	[SerializeField]
-	[Tooltip("Speed at which the Splach Screen follows the players Eyes")]
-	float slerpSpeed = 5.0f;
 
 	bool SceneLoaded = false;
 	bool FinishedLoading = false;
@@ -51,14 +46,6 @@ public class SplashScene : MonoBehaviour
 			StartCoroutine(StartGame());
 	}
 
-	void LateUpdate()
-	{
-		InputDevices.GetDeviceAtXRNode(XRNode.CenterEye).TryGetFeatureValue(CommonUsages.centerEyeRotation, out Quaternion rotation);
-
-		if (rotation != null)
-			transform.parent.rotation = Quaternion.Slerp(transform.parent.rotation, rotation, Time.deltaTime * slerpSpeed);
-	}
-
 	void SplashDone()
 	{
 		FinishedSplashScreen = true;
@@ -70,8 +57,6 @@ public class SplashScene : MonoBehaviour
 		ManagerRoot.parent = root;
 		PoolContainer.pool = PoolRoot;
 
-		yield return null;
-
 		MonoBehaviour[] managers = Resources.LoadAll<MonoBehaviour>("Managers");
 
 		foreach (MonoBehaviour manager in managers)
@@ -80,20 +65,20 @@ public class SplashScene : MonoBehaviour
 			obj.transform.parent = ManagerRoot;
 		}
 
-		yield return null;
+		// yield return null;
 
-		MonoBehaviour[] scripts = Resources.LoadAll<MonoBehaviour>("Pools");
+		// MonoBehaviour[] scripts = Resources.LoadAll<MonoBehaviour>("Pools");
 
-		scripts = scripts.Filter((obj) => obj is IInitializable);
+		// scripts = scripts.Filter((obj) => obj is IInitializable);
 
-		foreach (MonoBehaviour script in scripts)
-		{
-			GameObject obj = script.gameObject;
-			IInitializable init = (IInitializable)script;
-			init.Initialize(obj, init.GetInitialPoolCount());
+		// foreach (MonoBehaviour script in scripts)
+		// {
+		// 	GameObject obj = script.gameObject;
+		// 	IInitializable init = (IInitializable)script;
+		// 	init.Initialize(obj, init.GetInitialPoolCount());
 
-			yield return null;
-		}
+		// 	yield return null;
+		// }
 		FinishedLoading = true;
 		yield return null;
 	}

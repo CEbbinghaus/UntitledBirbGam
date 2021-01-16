@@ -70,7 +70,6 @@ internal class Spawning : Singleton<Spawning>
 		}
 		else if (toBeSpawned != null && time <= 0)
 		{
-			Debug.Log("Spawned: " + toBeSpawned.ToString());
 			toBeSpawned.gameObject.SetActive(true);
 			toBeSpawned = null;
 			return;
