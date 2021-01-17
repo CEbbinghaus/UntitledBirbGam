@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -8,28 +9,38 @@ public abstract class ControllerButton : EventTrigger
 	public int index;
 	[HideInInspector]
 	public Button button;
+	[HideInInspector]
+	public TextMeshProUGUI buttonText;
 
 	private void Awake()
 	{
 		button = GetComponent<Button>();
 		button.targetGraphic.color = button.colors.normalColor;
 		button.onClick.AddListener(Press);
+		buttonText = GetComponentInChildren<TextMeshProUGUI>();
 	}
 
 	public virtual void Press()
 	{
+		buttonText.fontMaterial.DisableKeyword("GLOW_ON");
 		EventSystem.current.SetSelectedGameObject(null);
 	}
 
 	public override void OnPointerEnter(PointerEventData eventData)
 	{
-		base.OnPointerEnter(eventData);
-		ControllerInputMenu.instance.SetHoverButton(this);
+		if (ControllerInputMenu.instance.menuState == MenuState.Menu)
+		{
+			base.OnPointerEnter(eventData);
+			ControllerInputMenu.instance.SetSelectedButton(this);
+		}
 	}
 
 	public override void OnPointerExit(PointerEventData eventData)
 	{
-		base.OnPointerExit(eventData);
-		ControllerInputMenu.instance.CancelControllerInput(this);
+		if (ControllerInputMenu.instance.menuState == MenuState.Menu)
+		{
+			base.OnPointerExit(eventData);
+			ControllerInputMenu.instance.CancelControllerInput(this);
+		}
 	}
 }

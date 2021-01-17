@@ -22,7 +22,6 @@ public class ControllerInputMenu : MonoBehaviour
     float timer = 0;
     List<ControllerButton> menuButtons = new List<ControllerButton>();
     int currentIndex = -1;
-    UIPan UIPan;
 
     private void Awake()
     {
@@ -49,7 +48,6 @@ public class ControllerInputMenu : MonoBehaviour
                 setIndex++;
             }
         }
-        UIPan = FindObjectOfType<UIPan>();
     }
 
     void Update()
@@ -69,11 +67,12 @@ public class ControllerInputMenu : MonoBehaviour
                 {
                     if (currentIndex >= 0)
                     {
+                        menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
                         menuButtons[currentIndex].Press();
                     }
                     else
                     {
-                        SetHoverButton(0);
+                        SetSelectedButton(0);
                     }
                 }
 
@@ -89,14 +88,14 @@ public class ControllerInputMenu : MonoBehaviour
                     // Move Up
                     if (Input.GetAxis("Vertical") > sensitivity)
                     {
-                        SetHoverButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count - 1) % menuButtons.Count);
+                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count - 1) % menuButtons.Count);
                         return;
                     }
 
                     // Move down
                     if (Input.GetAxis("Vertical") < -sensitivity)
                     {
-                        SetHoverButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count + 1) % menuButtons.Count);
+                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count + 1) % menuButtons.Count);
                         return;
                     }
                 }
@@ -116,24 +115,42 @@ public class ControllerInputMenu : MonoBehaviour
         }
     }
 
-    public void SetHoverButton(int index)
+    public void SetSelectedButton(int index)
     {
+        // No button previously selected, nothing to reset.
+        if (currentIndex != -1)
+            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
+
         currentIndex = index;
+        // If the player is using a mouse, don't set a selected button
+        if (currentIndex == -1) return;
+
+        menuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
+
         menuButtons[currentIndex].button.Select();
         timer = holdDelay;
     }
 
-    public void SetHoverButton(ControllerButton button)
+    public void SetSelectedButton(ControllerButton button)
     {
+        // No button previously selected, nothing to reset.
+        if (currentIndex != -1)
+            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
+
         currentIndex = button.index;
+        menuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
         menuButtons[currentIndex].button.Select();
         timer = holdDelay;
     }
 
     public void CancelControllerInput(ControllerButton button)
     {
+        // Already not using controller, return
+        if (currentIndex == -1) return;
+
         if (button == null || currentIndex == button.index)
         {
+            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
             EventSystem.current.SetSelectedGameObject(null);
             currentIndex = -1;
         }
@@ -141,9 +158,9 @@ public class ControllerInputMenu : MonoBehaviour
 
     public void ExitSubMenu()
     {
-        UIPan.ChangeState(activeSubMenu, UIPanState.MovingOffscreen);
+        UIPan.instance.ChangeState(activeSubMenu, UIPanState.MovingOffscreen);
         activeSubMenu = null;
-        SetHoverButton(currentIndex);
+        SetSelectedButton(currentIndex);
         menuState = MenuState.Menu;
     }
 }

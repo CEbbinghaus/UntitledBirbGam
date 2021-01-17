@@ -20,33 +20,37 @@ public class UIPanElement
 	public AnimationCurve movementCurveYOffscreen;
 	public AnimationCurve fadeCurve;
 	public float duration;
-	[HideInInspector]
 	public float progress;
-	[HideInInspector]
 	public Vector2 cachedLocation;
-	[HideInInspector]
 	public UIPanState state;
-
-	public UIPanElement() { }
-	public UIPanElement(float _duration)
-	{
-		duration = _duration;
-	}
 }
 public class UIPan : MonoBehaviour
 {
+	public static UIPan instance;
 	Vector2 screenSize;
-	[SerializeField]
 	public UIPanElement options;
+	public UIPanElement credits;
 	[SerializeField]
-	UIPanElement credits;
-	[SerializeField]
-	CanvasGroup fade;
+	CanvasGroup fade = new CanvasGroup();
 
-    // Start is called before the first frame update
-    void Start()
+	private void Awake()
+	{
+		if (instance)
+		{
+			Destroy(this);
+		}
+		else
+		{
+			instance = this;
+		}
+	}
+
+	// Start is called before the first frame update
+	void Start()
     {
 		screenSize = new Vector2Int(Screen.width, Screen.height);
+		credits.cachedLocation = credits.transform.anchoredPosition;
+		options.cachedLocation = options.transform.anchoredPosition;
 
 		// Move them offscreen
 		options.transform.anchoredPosition = new Vector2(screenSize.x, options.cachedLocation.y);
