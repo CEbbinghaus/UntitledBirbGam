@@ -16,12 +16,13 @@ public class ControllerInputMenu : MonoBehaviour
 
     public MenuState menuState = MenuState.Menu;
     [HideInInspector]
-    public GameObject activeSubMenu;
+    public UIPanElement activeSubMenu;
     public float holdDelay = 0.5f;
     public float sensitivity = 0.3f;
     float timer = 0;
     List<ControllerButton> menuButtons = new List<ControllerButton>();
     int currentIndex = -1;
+    UIPan UIPan;
 
     private void Awake()
     {
@@ -48,6 +49,7 @@ public class ControllerInputMenu : MonoBehaviour
                 setIndex++;
             }
         }
+        UIPan = FindObjectOfType<UIPan>();
     }
 
     void Update()
@@ -139,7 +141,7 @@ public class ControllerInputMenu : MonoBehaviour
 
     public void ExitSubMenu()
     {
-        activeSubMenu.SetActive(false);
+        UIPan.ChangeState(activeSubMenu, UIPanState.MovingOffscreen);
         activeSubMenu = null;
         SetHoverButton(currentIndex);
         menuState = MenuState.Menu;

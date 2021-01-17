@@ -1,82 +1,102 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+
+public enum PauseState
+{
+	None,
+	Rising,
+	Falling
+}
+
+[Serializable]
+public class PauseCurve
+{
+	public KeyCode DEBUG_Key;
+	public AnimationCurve movementCurve;
+	public AnimationCurve fadeCurve;
+	public float duration;
+
+	public PauseCurve() { }
+	public PauseCurve(KeyCode _key, float _duration)
+	{
+		DEBUG_Key = _key;
+		duration = _duration;
+	}
+}
 
 public class PauseUI : MonoBehaviour
 {
-	enum State
-	{
-		None,
-		Rising, 
-		Falling
-	}
-
 	float progress;
-	State state;
+	PauseState state;
 	float cachedXPos;
 	[SerializeField]
 	new RectTransform transform;
 	int screenHeight;
 
 	[SerializeField]
-	AnimationCurve fallCurve;
+	PauseCurve fallCurve = new PauseCurve(KeyCode.K, 2);
 	[SerializeField]
-	float fallDuration;
+	PauseCurve riseCurve = new PauseCurve(KeyCode.L, 0.3f);
 
 	[SerializeField]
-	AnimationCurve riseCurve;
-	[SerializeField]
-	float riseDuration;
-
-	[SerializeField]
-	Gradient g;
+	CanvasGroup pauseFade;
 
 	private void Awake()
 	{
 		screenHeight = Screen.height;
 		transform = GetComponent<RectTransform>();
 		cachedXPos = transform.anchoredPosition.x;
+		transform.anchoredPosition = new Vector2(cachedXPos, screenHeight);
 	}
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.L))
-		{
-			state = State.Falling;
-		}
+		#region Debug stuff
+		if (Input.GetKeyDown(fallCurve.DEBUG_Key))
+			SetFallState();
+		if (Input.GetKeyDown(riseCurve.DEBUG_Key))
+			SetRiseState();
+		#endregion
+
 		switch (state)
 		{
-			case State.None:
+			case PauseState.None:
 				break;
-			case State.Rising:
-				Rise();
+			case PauseState.Rising:
+				SetPosition(riseCurve);
 				break;
-			case State.Falling:
-				Fall();
+			case PauseState.Falling:
+				SetPosition(fallCurve);
 				break;
 		}
 	}
 
-	void Rise()
+	void SetPosition(PauseCurve pauseCurve)
 	{
-		progress = Mathf.Clamp(progress + (Time.deltaTime / riseDuration), 0, 1);
-		transform.anchoredPosition = new Vector3(cachedXPos, fallCurve.Evaluate(progress) * screenHeight);
-		CheckProgess();
-	}
-
-	void Fall()
-	{
-		progress = Mathf.Clamp(progress + (Time.deltaTime / fallDuration), 0, 1);
-		transform.anchoredPosition = new Vector3(cachedXPos, fallCurve.Evaluate(progress) * screenHeight);
-		CheckProgess();
-	}
-
-	void CheckProgess()
-	{
+		// Calculate how far into the curve we are
+		progress = Mathf.Clamp(progress + (Time.unscaledDeltaTime / pauseCurve.duration), 0, 1);
+		// Set the position
+		transform.anchoredPosition = new Vector3(cachedXPos, pauseCurve.movementCurve.Evaluate(progress) * screenHeight);
+		pauseFade.alpha = pauseCurve.fadeCurve.Evaluate(progress);
+		Time.timeScale = pauseCurve.fadeCurve.Evaluate(1 - progress);
+		// Stop if at completion
 		if (progress == 1)
 		{
 			progress = 0;
-			state = State.None;
+			state = PauseState.None;
 		}
 	}
+
+	public void ChangeState(PauseState _state)
+	{
+		state = _state;
+		progress = 0;
+	}
+
+	[ContextMenu("Fall")]
+	void SetFallState() => ChangeState(PauseState.Falling);
+
+	[ContextMenu("Rise")]
+	void SetRiseState() => ChangeState(PauseState.Rising);
 }

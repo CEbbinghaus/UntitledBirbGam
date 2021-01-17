@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class ControllerButtonOptions : ControllerButton
 {
-	public GameObject optionsObject;
+	UIPan UIPan;
+	public UIPanElement optionsElement;
+
+	// Copy the info into the UIPan script
+	private void Awake()
+	{
+		UIPan = FindObjectOfType<UIPan>();
+		UIPan.options = optionsElement;
+	}
 
 	public override void Press()
 	{
 		base.Press();
-		ControllerInputMenu.instance.activeSubMenu = optionsObject;
-		optionsObject.SetActive(true);
+		ControllerInputMenu.instance.activeSubMenu = optionsElement;
+		UIPan.ChangeState(UIPan.options, UIPanState.MovingOnscreen);
 		ControllerInputMenu.instance.menuState = MenuState.SubMenu;
 	}
 }
