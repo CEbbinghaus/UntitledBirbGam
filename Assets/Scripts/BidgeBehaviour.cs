@@ -75,7 +75,7 @@ public class BidgeBehaviour : MonoBehaviour
 	{
 		if (target == null)return;
 
-		AudioManager.SetChasing(state == BidgeState.Chasing);
+		BackgroundMusic.SetChasing(state == BidgeState.Chasing);
 
 		switch (state)
 		{

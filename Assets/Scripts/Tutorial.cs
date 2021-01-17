@@ -26,6 +26,12 @@ public class Tutorial : MonoBehaviour
 	private bool m_InTutorial = true;
 
 	[SerializeField]
+	float turnSpeed = 15.0f;
+
+	[SerializeField]
+	float moveSpeed = 10.0f;
+
+	[SerializeField]
 	float FadeOutSpeed = .5f;
 
 	[SerializeField]
@@ -66,8 +72,8 @@ public class Tutorial : MonoBehaviour
 				}
 			}
 
-			m_TutorialCamera.transform.position = Vector3.MoveTowards(m_TutorialCamera.transform.position, m_CameraPositions[m_CurrentIndex].transform.position, 10f);
-			m_TutorialCamera.transform.rotation = Quaternion.RotateTowards(m_TutorialCamera.transform.rotation, m_CameraPositions[m_CurrentIndex].transform.rotation, 15f);
+			m_TutorialCamera.transform.position = Vector3.MoveTowards(m_TutorialCamera.transform.position, m_CameraPositions[m_CurrentIndex].transform.position, moveSpeed);
+			m_TutorialCamera.transform.rotation = Quaternion.RotateTowards(m_TutorialCamera.transform.rotation, m_CameraPositions[m_CurrentIndex].transform.rotation, turnSpeed);
 		}
 		else if (m_TutorialCanvasGroup.alpha > 0)
 			m_TutorialCanvasGroup.alpha -= Time.deltaTime * FadeOutSpeed;
