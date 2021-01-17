@@ -67,7 +67,6 @@ public class ControllerInputMenu : MonoBehaviour
                 {
                     if (currentIndex >= 0)
                     {
-                        menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
                         menuButtons[currentIndex].Press();
                     }
                     else
