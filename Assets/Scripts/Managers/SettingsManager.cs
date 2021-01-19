@@ -59,14 +59,6 @@ internal class SettingsManager : Singleton<SettingsManager>
 
 	void Start()
 	{
-		// First load. Set defaults
-		if (!PlayerPrefs.HasKey("InitialSetup"))
-		{
-			PlayerPrefs.SetString("InitialSetup", "yes");
-			PlayerPrefs.SetInt("JoystickPosition", 0);
-			MusicVolume = 0.5f;
-			SFXVolume = 0.5f;
-		}
 		_masterVolume = PlayerPrefs.GetFloat("MasterVolume");
 		_musicVolume = PlayerPrefs.GetFloat("MusicVolume");
 		_sfxVolume = PlayerPrefs.GetFloat("SFXVolume");

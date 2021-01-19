@@ -20,6 +20,14 @@ public class Options : MonoBehaviour
 
 	void Start()
 	{
+		// First load. Set defaults
+		if (!PlayerPrefs.HasKey("InitialSetup"))
+		{
+			PlayerPrefs.SetString("InitialSetup", "yes");
+			PlayerPrefs.SetInt("JoystickPosition", 0);
+			SettingsManager.MusicVolume = 0.5f;
+			SettingsManager.SFXVolume = 0.5f;
+		}
 		toggle.anchoredPosition = new Vector2(toggle.anchoredPosition.x + PlayerPrefs.GetInt("JoystickPosition") * toggle.sizeDelta.x, toggle.anchoredPosition.y);
 		BGMSlider.value = PlayerPrefs.GetFloat("MusicVolume") * 10;
 		SFXSlider.value = PlayerPrefs.GetFloat("SFXVolume") * 10;
