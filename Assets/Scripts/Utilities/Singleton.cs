@@ -7,7 +7,10 @@ internal class Singleton<T> : MonoBehaviour where T : Object
 	protected static T GetInstance()
 	{
 		if (instance == null)
-			Debug.LogWarningFormat("No Instance of {0} Exists", typeof(T).Name);
+		{
+			Debug.LogWarning($"No instance of {typeof(T).Name} exists.");// Creating one instead.");
+																 //instance = new GameObject(typeof(T).Name).AddComponent(typeof(T)) as T;
+		}
 
 		return instance;
 	}

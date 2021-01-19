@@ -50,8 +50,23 @@ internal class SettingsManager : Singleton<SettingsManager>
 		}
 	}
 
+	// Have to split these up for some goddamn reason. Doesn't set them at start otherwise
 	void Awake()
 	{
+		RegisterInstance(this);
+		mixer = Resources.Load("Main") as AudioMixer;
+	}
+
+	void Start()
+	{
+		// First load. Set defaults
+		if (!PlayerPrefs.HasKey("InitialSetup"))
+		{
+			PlayerPrefs.SetString("InitialSetup", "yes");
+			PlayerPrefs.SetInt("JoystickPosition", 0);
+			MusicVolume = 0.5f;
+			SFXVolume = 0.5f;
+		}
 		_masterVolume = PlayerPrefs.GetFloat("MasterVolume");
 		_musicVolume = PlayerPrefs.GetFloat("MusicVolume");
 		_sfxVolume = PlayerPrefs.GetFloat("SFXVolume");
