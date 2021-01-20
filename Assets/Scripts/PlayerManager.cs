@@ -27,39 +27,13 @@ public class PlayerManager : MonoBehaviour
 	private int m_Score = 0;
 
 	/// <summary>
-	/// The text object that displays the score.
-	/// </summary>
-	[SerializeField] UICounter m_ScoreText = null;
-
-	/// <summary>
-	/// The text object that displays the amount the player is carrying.
-	/// </summary>
-	[SerializeField] UICounter m_FoodCollectedText = null;
-
-	/// <summary>
 	/// Player lives.
 	/// </summary>
 	[SerializeField] int m_Lives = 3;
 
-	[SerializeField] Image EncumbranceBar;
-
-	/// <summary>
-	/// The text object that displays the player's lives.
-	/// </summary>
-	[SerializeField] Image[] m_LifeGraphics;
-
-	[SerializeField] GameObject m_EndScreen = null;
-
-	[SerializeField] UICounter m_FinalScore = null;
-
 	[SerializeField] ParticleSystem[] m_Particles = null;
 
 	[SerializeField] float m_DeaggroTimer = 10.0f;
-
-	[SerializeField]
-	FoodHolder sandwichHolder;
-	[SerializeField]
-	FoodHolder seedHolder;
 
 	[SerializeField]
 	AudioInstance SeedPickupSound;
@@ -70,39 +44,22 @@ public class PlayerManager : MonoBehaviour
 	[SerializeField]
 	AudioInstance ScoreSound;
 
-	int seeds, sandwiches;
+	int collectedSeeds, collectedSandwiches;
 
-	void Awake()
+	void Start()
 	{
-		Time.timeScale = 1;
+		UIManager.instance.ClearFoodUI();
 		Spawning.RefreshSpawned();
-		UpdateCollectedUI(seedHolder, seeds);
-		UpdateCollectedUI(sandwichHolder, sandwiches);
 	}
 
+
+	// For food and nest interactions
 	void OnTriggerEnter(Collider other)
 	{
 		// Increase the score by the amount of food the player was holding and update scoreboard.
-		if (other.tag == "Nest")
+		if (other.CompareTag("Nest"))
 		{
-			m_Score += m_FoodCollected;
-
-			if (m_FoodCollected > 0)
-				AudioManager.PlaySound(ScoreSound, Vector3.zero);
-
-			Spawning.RefreshSpawned();
-
-			m_ScoreText?.SetValue(m_Score);
-
-			// Reset food collected.
-			m_FoodCollected = 0;
-			m_FoodCollectedText?.SetValue(m_FoodCollected);
-
-			seeds = 0;
-			sandwiches = 0;
-
-			UpdateCollectedUI(seedHolder, seeds);
-			UpdateCollectedUI(sandwichHolder, sandwiches);
+			DepositFood();
 			return;
 		}
 
@@ -112,55 +69,30 @@ public class PlayerManager : MonoBehaviour
 		switch (other.tag)
 		{
 			case "Seed":
-				m_FoodCollected++;
+				other.gameObject.SetActive(false);
+
 				AudioManager.PlaySound(SeedPickupSound, Vector3.zero);
 
-				seeds++;
-				other.gameObject.SetActive(false);
+				m_FoodCollected++;
+				collectedSeeds++;
 
-				UpdateCollectedUI(seedHolder, seeds);
+				UIManager.instance.UpdateFoodUI(UIManager.instance.activeElements.foodElements.seeds, collectedSeeds);
 				break;
 			case "Sandwich":
-				m_FoodCollected += m_SandwichPoints;
-				AudioManager.PlaySound(SandwichPickupSound, Vector3.zero);
-
-				sandwiches++;
 				other.gameObject.SetActive(false);
 
-				UpdateCollectedUI(sandwichHolder, sandwiches);
+				AudioManager.PlaySound(SandwichPickupSound, Vector3.zero);
+
+				m_FoodCollected += m_SandwichPoints;
+				collectedSandwiches++;
+
+				UIManager.instance.UpdateFoodUI(UIManager.instance.activeElements.foodElements.sandwiches, collectedSandwiches);
 				break;
 		}
 	}
 
-	void UpdateCollectedUI(FoodHolder holder, int collected)
-	{
-		if (collected == 0)
-		{
-			for (int i = 0; i < 5; i++)
-			{
-				holder.food[i].gameObject.SetActive(false);
-			}
-			holder.counter.gameObject.SetActive(false);
-			return;
-		}
-		if (collected < 5)
-		{
-			for (int i = 1; i < 5; i++)
-			{
-				holder.food[collected - 1].gameObject.SetActive(true);
-			}
-		}
-		else
-		{
-			for (int i = 1; i < 5; i++)
-			{
-				holder.food[i].gameObject.SetActive(false);
-			}
-			holder.counter.gameObject.SetActive(true);
-			holder.counter.text = "x" + collected;
-		}
-	}
-
+	// For world and enemy interactions
+	// Move most of this to the bidge and frisbee scripts.
 	void OnCollisionEnter(Collision collision)
 	{
 		switch (collision.gameObject.tag)
@@ -168,26 +100,17 @@ public class PlayerManager : MonoBehaviour
 			case "Bidge":
 				BidgeBehaviour behaviour = collision.gameObject.GetComponent<BidgeBehaviour>();
 
-				if (behaviour.m_DeaggroTimer > 0)return;
+				if (behaviour.m_DeaggroTimer > 0) return;
 
 				behaviour.SetDeaggroTimer(m_DeaggroTimer);
 
-				goto case "Frisbee";
+				TakeDamage();
+				break;
 			case "Frisbee":
 				if (collision.gameObject.GetComponent<FrisbeeMovement>()?.GetFired() == false)
 					return;
-
-				m_Lives--;
-				m_LifeGraphics[m_Lives].enabled = false;
-				AudioManager.PlaySound("WillHit", transform.position);
+				TakeDamage();
 				break;
-		}
-
-		{
-			//m_FoodCollected = m_FoodCollected - (int)(m_FoodCollected * 0.1);
-			//m_FoodCollectedText.Value = m_FoodCollected;
-			// if (!m_Particles[0].isPlaying)
-			// 	m_Particles[0].Play();
 		}
 
 		if (!m_Particles[2].isPlaying)
@@ -195,24 +118,40 @@ public class PlayerManager : MonoBehaviour
 			m_Particles[1].Play();
 			m_Particles[2].Play();
 		}
+	}
 
-		if (m_Lives <= 0)
+	void DepositFood()
+	{
+		if (m_FoodCollected > 0)
 		{
-			m_EndScreen.SetActive(true);
-			Time.timeScale = 0.0f;
-			m_FinalScore.Value = m_Score;
+			// Play sound
+			AudioManager.PlaySound(ScoreSound, Vector3.zero);
+
+			// Update score
+			m_Score += m_FoodCollected;
+			UIManager.instance.activeElements.scoreText.SetValue(m_Score);
+
+			// Reset collected food
+			m_FoodCollected = 0;
+			collectedSeeds = 0;
+			collectedSandwiches = 0;
+			UIManager.instance.ClearFoodUI();
+
+			Spawning.RefreshSpawned();
 		}
 	}
 
-	void Update()
+	public void TakeDamage()
 	{
-		UpdateEncumberanceBar();
-	}
+		m_Lives--;
+		UIManager.instance.UpdateLivesUI(m_Lives);
+		AudioManager.PlaySound("WillHit", transform.position);
 
-	void UpdateEncumberanceBar()
-	{
-		if (EncumbranceBar)
-			EncumbranceBar.fillAmount = Mathf.Lerp(EncumbranceBar.fillAmount, Mathf.Min(FoodEncumbrance(), 1), Time.deltaTime);
+		// If the player is out of lives, show the end screen
+		if (m_Lives <= 0)
+		{
+			UIManager.instance.DisplayEndScreen(m_Score);
+		}
 	}
 
 	/// <summary>

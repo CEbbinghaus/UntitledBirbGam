@@ -67,7 +67,6 @@ public class Tutorial : MonoBehaviour
 					m_InTutorial = false;
 					m_TutorialCamera.enabled = false;
 					m_MainCanvasGroup.alpha = 1;
-					// TODO: Fade out m_TutorialCanvasGroup over time.
 					return;
 				}
 			}
@@ -76,6 +75,11 @@ public class Tutorial : MonoBehaviour
 			m_TutorialCamera.transform.rotation = Quaternion.RotateTowards(m_TutorialCamera.transform.rotation, m_CameraPositions[m_CurrentIndex].transform.rotation, turnSpeed);
 		}
 		else if (m_TutorialCanvasGroup.alpha > 0)
+		{
 			m_TutorialCanvasGroup.alpha -= Time.deltaTime * FadeOutSpeed;
+			// Disable the tutorial script once it's finished fading
+			if (m_TutorialCanvasGroup.alpha == 0)
+				this.enabled = false;
+		}
 	}
 }
