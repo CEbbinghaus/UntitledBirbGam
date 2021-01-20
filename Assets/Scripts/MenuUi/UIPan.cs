@@ -19,19 +19,27 @@ public class UIPanElement
 	public AnimationCurve movementCurveXOffscreen;
 	public AnimationCurve movementCurveYOffscreen;
 	public AnimationCurve fadeCurve;
-	public float duration;
-	public float progress;
-	public Vector2 cachedLocation;
-	public UIPanState state;
+	public float duration = 0.3f;
+	[NonSerialized]	public float progress;
+	[NonSerialized]	public Vector2 cachedLocation;
+	[NonSerialized]	public UIPanState state;
 }
 public class UIPan : MonoBehaviour
 {
 	public static UIPan instance;
-	Vector2 screenSize;
-	public UIPanElement options;
-	public UIPanElement credits;
+	Vector2Int screenSize;
+	public GameObject landscapeUI;
+	public GameObject portraitUI;
+	[Space(10)]
+	public UIPanElement optionsLandscape;
+	public UIPanElement optionsPortrait;
+	public UIPanElement creditsLandscape;
+	public UIPanElement creditsPortrait;
+	[NonSerialized] public UIPanElement activeOptions;
+	[NonSerialized] public UIPanElement activeCredits;
 	[SerializeField]
 	CanvasGroup fade = new CanvasGroup();
+	ScreenOrientation cachedOrientation;
 
 	private void Awake()
 	{
@@ -49,19 +57,79 @@ public class UIPan : MonoBehaviour
 	void Start()
     {
 		screenSize = new Vector2Int(Screen.width, Screen.height);
-		credits.cachedLocation = credits.transform.anchoredPosition;
-		options.cachedLocation = options.transform.anchoredPosition;
+		int largerDimension = screenSize.x > screenSize.y ? screenSize.x : screenSize.y;
+		optionsLandscape.cachedLocation = optionsLandscape.transform.anchoredPosition;
+		optionsPortrait.cachedLocation = optionsPortrait.transform.anchoredPosition;
+		creditsLandscape.cachedLocation = creditsLandscape.transform.anchoredPosition;
+		creditsPortrait.cachedLocation = creditsPortrait.transform.anchoredPosition;
 
 		// Move them offscreen
-		options.transform.anchoredPosition = new Vector2(screenSize.x, options.cachedLocation.y);
-		credits.transform.anchoredPosition = new Vector2(screenSize.x, credits.cachedLocation.y);
-    }
+		optionsLandscape.transform.anchoredPosition = new Vector2(largerDimension, optionsLandscape.cachedLocation.y);
+		optionsPortrait.transform.anchoredPosition = new Vector2(optionsPortrait.cachedLocation.x, largerDimension);
+		creditsLandscape.transform.anchoredPosition = new Vector2(largerDimension, creditsLandscape.cachedLocation.y);
+		creditsPortrait.transform.anchoredPosition = new Vector2(creditsPortrait.cachedLocation.x, largerDimension);
+
+		UpdateOrientation();
+	}
 
     // Update is called once per frame
     void Update()
 	{
-		AnimateElement(options);
-		AnimateElement(credits);
+		//if (Screen.orientation != cachedOrientation)
+		if (ControllerInputMenu.instance.DEBUGOrientation != cachedOrientation)
+		{
+			UpdateOrientation();
+		}
+		AnimateElement(activeCredits);
+		AnimateElement(activeOptions);
+	}
+
+	void UpdateOrientation()
+	{
+		//switch (Screen.orientation)
+		switch (ControllerInputMenu.instance.DEBUGOrientation)
+		{
+			case ScreenOrientation.Portrait:
+				// Set new orientation
+				cachedOrientation = ScreenOrientation.Portrait;
+				// Toggle active UI
+				portraitUI.SetActive(true);
+				landscapeUI.SetActive(false);
+				activeOptions = optionsPortrait;
+				activeCredits = creditsPortrait;
+				// Sync animation progress/state, position will be synced immediately after this
+				optionsPortrait.state = optionsLandscape.state;
+				creditsPortrait.state = creditsLandscape.state;
+				optionsPortrait.progress = optionsLandscape.progress;
+				creditsPortrait.progress = creditsLandscape.progress;
+				break;
+			case ScreenOrientation.LandscapeLeft:
+			case ScreenOrientation.LandscapeRight:
+				// Set new orientation
+				cachedOrientation = ScreenOrientation.Landscape;
+				// Toggle active UI
+				landscapeUI.SetActive(true);
+				portraitUI.SetActive(false);
+				activeOptions = optionsLandscape;
+				activeCredits = creditsLandscape;
+				// Sync animation progress/state, position will be synced immediately after this
+				optionsLandscape.state = optionsPortrait.state;
+				creditsLandscape.state = creditsPortrait.state;
+				optionsLandscape.progress = optionsPortrait.progress;
+				creditsLandscape.progress = creditsPortrait.progress;
+				break;
+			default:
+				goto case ScreenOrientation.LandscapeRight;
+		}
+
+		// Force the menus into the correct locations
+		UIPanElement submenu = ControllerInputMenu.instance.activeSubMenu;
+		if (activeCredits != submenu)
+			activeCredits.transform.anchoredPosition = new Vector3(activeCredits.movementCurveXOffscreen.Evaluate(1) * screenSize.x, activeCredits.movementCurveYOffscreen.Evaluate(1) * screenSize.y);
+		if (activeOptions != submenu)
+			activeOptions.transform.anchoredPosition = new Vector3(activeOptions.movementCurveXOffscreen.Evaluate(1) * screenSize.x, activeOptions.movementCurveYOffscreen.Evaluate(1) * screenSize.y);
+		if (submenu.transform && submenu.progress == 0)
+			submenu.transform.anchoredPosition = submenu.cachedLocation;
 	}
 
 	void AnimateElement(UIPanElement element)

@@ -13,15 +13,19 @@ public enum MenuState
 public class ControllerInputMenu : MonoBehaviour
 {
     public static ControllerInputMenu instance;
-
+    public ScreenOrientation DEBUGOrientation;
     public MenuState menuState = MenuState.Menu;
-    [HideInInspector]
     public UIPanElement activeSubMenu;
     public float holdDelay = 0.5f;
     public float sensitivity = 0.3f;
     float timer = 0;
-    List<ControllerButton> menuButtons = new List<ControllerButton>();
+    public Transform landscapeButtons;
+    public Transform portraitButtons;
+    List<ControllerButton> menuButtonsLandscape = new List<ControllerButton>();
+    List<ControllerButton> menuButtonsPortrait = new List<ControllerButton>();
+    List<ControllerButton> activeMenuButtons = new List<ControllerButton>();
     int currentIndex = -1;
+    ScreenOrientation cachedOrientation;
 
     private void Awake()
     {
@@ -33,25 +37,43 @@ public class ControllerInputMenu : MonoBehaviour
         {
             instance = this;
         }
+        Screen.orientation = DEBUGOrientation;
     }
 
     private void Start()
     {
         int setIndex = 0;
-        foreach (Transform child in transform)
+        foreach (Transform child in landscapeButtons)
         {
             ControllerButton button = child.GetComponent<ControllerButton>();
             if (button)
             {
                 button.index = setIndex;
-                menuButtons.Add(button);
+                menuButtonsLandscape.Add(button);
                 setIndex++;
             }
         }
+        setIndex = 0;
+        foreach (Transform child in portraitButtons)
+        {
+            ControllerButton button = child.GetComponent<ControllerButton>();
+            if (button)
+            {
+                button.index = setIndex;
+                menuButtonsPortrait.Add(button);
+                setIndex++;
+            }
+        }
+        UpdateOrientation();
     }
 
     void Update()
     {
+        //if (Screen.orientation != cachedOrientation)
+        if (DEBUGOrientation != cachedOrientation)
+        {
+            UpdateOrientation();
+        }
         switch (menuState)
         {
             case MenuState.Menu:
@@ -67,7 +89,7 @@ public class ControllerInputMenu : MonoBehaviour
                 {
                     if (currentIndex >= 0)
                     {
-                        menuButtons[currentIndex].Press();
+                        activeMenuButtons[currentIndex].Press();
                     }
                     else
                     {
@@ -87,14 +109,14 @@ public class ControllerInputMenu : MonoBehaviour
                     // Move Up
                     if (Input.GetAxis("Vertical") > sensitivity)
                     {
-                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count - 1) % menuButtons.Count);
+                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + activeMenuButtons.Count - 1) % activeMenuButtons.Count);
                         return;
                     }
 
                     // Move down
                     if (Input.GetAxis("Vertical") < -sensitivity)
                     {
-                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count + 1) % menuButtons.Count);
+                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + activeMenuButtons.Count + 1) % activeMenuButtons.Count);
                         return;
                     }
                 }
@@ -114,19 +136,46 @@ public class ControllerInputMenu : MonoBehaviour
         }
     }
 
+    void UpdateOrientation()
+    {
+        //switch (Screen.orientation)
+        switch (DEBUGOrientation)
+        {
+            case ScreenOrientation.Portrait:
+                cachedOrientation = ScreenOrientation.Portrait;
+                activeMenuButtons = menuButtonsPortrait;
+                if (activeSubMenu == UIPan.instance.creditsLandscape)
+                    activeSubMenu = UIPan.instance.creditsPortrait;
+                if (activeSubMenu == UIPan.instance.optionsLandscape)
+                    activeSubMenu = UIPan.instance.optionsPortrait;
+                break;
+            case ScreenOrientation.LandscapeLeft:
+            case ScreenOrientation.LandscapeRight:
+                cachedOrientation = ScreenOrientation.Landscape;
+                activeMenuButtons = menuButtonsLandscape;
+                if (activeSubMenu == UIPan.instance.creditsPortrait)
+                    activeSubMenu = UIPan.instance.creditsLandscape;
+                if (activeSubMenu == UIPan.instance.optionsPortrait)
+                    activeSubMenu = UIPan.instance.optionsLandscape;
+                break;
+            default:
+                goto case ScreenOrientation.LandscapeRight;
+        }
+    }
+
     public void SetSelectedButton(int index)
     {
         // No button previously selected, nothing to reset.
         if (currentIndex != -1)
-            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
+            activeMenuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
 
         currentIndex = index;
         // If the player is using a mouse, don't set a selected button
         if (currentIndex == -1) return;
 
-        menuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
+        activeMenuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
 
-        menuButtons[currentIndex].button.Select();
+        activeMenuButtons[currentIndex].button.Select();
         timer = holdDelay;
     }
 
@@ -134,11 +183,11 @@ public class ControllerInputMenu : MonoBehaviour
     {
         // No button previously selected, nothing to reset.
         if (currentIndex != -1)
-            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
+            activeMenuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
 
         currentIndex = button.index;
-        menuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
-        menuButtons[currentIndex].button.Select();
+        activeMenuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
+        activeMenuButtons[currentIndex].button.Select();
         timer = holdDelay;
     }
 
@@ -149,7 +198,7 @@ public class ControllerInputMenu : MonoBehaviour
 
         if (button == null || currentIndex == button.index)
         {
-            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
+            activeMenuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
             EventSystem.current.SetSelectedGameObject(null);
             currentIndex = -1;
         }

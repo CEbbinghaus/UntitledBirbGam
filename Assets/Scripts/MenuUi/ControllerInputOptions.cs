@@ -14,7 +14,7 @@ public class ControllerInputOptions : MonoBehaviour
 
     void Update()
     {
-        if (ControllerInputMenu.instance.activeSubMenu == UIPan.instance.options)
+        if (ControllerInputMenu.instance.activeSubMenu == UIPan.instance.optionsPortrait)
         {
 
             // -1 index is if mouse is currently being used

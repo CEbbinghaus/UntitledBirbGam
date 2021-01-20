@@ -12,13 +12,13 @@ public class Options : MonoBehaviour
 	public AudioMixerGroup SFXMix;
 	public RectTransform toggle;
 
-	private void Awake()
+	private void Start()
 	{
 		BGMSlider.onValueChanged.AddListener(delegate { SettingsManager.MusicVolume = BGMSlider.value / 10f; }) ;
 		SFXSlider.onValueChanged.AddListener(delegate { SettingsManager.SFXVolume = SFXSlider.value / 10f; });
 	}
 
-	void Start()
+	private void OnEnable()
 	{
 		// First load. Set defaults
 		if (!PlayerPrefs.HasKey("InitialSetup"))
@@ -28,7 +28,10 @@ public class Options : MonoBehaviour
 			SettingsManager.MusicVolume = 0.5f;
 			SettingsManager.SFXVolume = 0.5f;
 		}
-		toggle.anchoredPosition = new Vector2(toggle.anchoredPosition.x + PlayerPrefs.GetInt("JoystickPosition") * toggle.sizeDelta.x, toggle.anchoredPosition.y);
+		if (toggle)
+		{
+			toggle.anchoredPosition = new Vector2(toggle.anchoredPosition.x + PlayerPrefs.GetInt("JoystickPosition") * toggle.sizeDelta.x, toggle.anchoredPosition.y);
+		}
 		BGMSlider.value = PlayerPrefs.GetFloat("MusicVolume") * 10;
 		SFXSlider.value = PlayerPrefs.GetFloat("SFXVolume") * 10;
 	}

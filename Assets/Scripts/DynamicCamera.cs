@@ -21,6 +21,7 @@ public class DynamicCamera : MonoBehaviour
 	{
 		foreach (var item in searchItems)
 		{
+			if (!item.gameObject.activeSelf) continue;
 			//print($"Distance to {item.name}: {Vector3.Distance(player.transform.position, item.position)}");
 			if (Vector3.Distance(player.transform.position, item.position) < magnetDistance)
 			{

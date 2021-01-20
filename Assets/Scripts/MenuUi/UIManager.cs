@@ -57,7 +57,7 @@ public class UIManager : MonoBehaviour
     public UICounter m_FinalScore = null;
 
     // Cached values and elements
-    DeviceOrientation cachedOrientation;
+    ScreenOrientation cachedOrientation;
     PlayerManager playerManager;
     Image activeCapacityBar;
 
@@ -82,7 +82,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        cachedOrientation = Input.deviceOrientation;
+        cachedOrientation = Screen.orientation;
         if (Input.touchSupported || debugTouch)
         {
             // Update the horizontal UI
@@ -92,22 +92,22 @@ public class UIManager : MonoBehaviour
             //portraitElements.pauseIcon.gameObject.SetActive(true);
             
             // Set the UI Layout
-            switch (Input.deviceOrientation)
+            switch (Screen.orientation)
             {
-                case DeviceOrientation.Portrait:
+                case ScreenOrientation.Portrait:
                     activeElements = portraitElements;
                     ChangeUIOrientation(portraitElements);
                     portraitElements.container.SetActive(true);
                     break;
-                case DeviceOrientation.LandscapeLeft:
-                case DeviceOrientation.LandscapeRight:
+                case ScreenOrientation.LandscapeLeft:
+                case ScreenOrientation.LandscapeRight:
                     activeElements = landscapeElements;
                     ChangeUIOrientation(landscapeElements);
                     landscapeElements.container.SetActive(true);
                     break;
                 default:
                     // Treat the game as if it is in landscape mode by default
-                    goto case DeviceOrientation.LandscapeRight;
+                    goto case ScreenOrientation.LandscapeRight;
             }
         }
     }
@@ -116,15 +116,15 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         // Update the UI elements if the orientation has changed to abother valid orientation
-        if (Input.deviceOrientation != cachedOrientation)
+        if (Screen.orientation != cachedOrientation)
         {
-            switch (Input.deviceOrientation)
+            switch (Screen.orientation)
             {
-                case DeviceOrientation.Portrait:
+                case ScreenOrientation.Portrait:
                     ChangeUIOrientation(portraitElements);
                     break;
-                case DeviceOrientation.LandscapeLeft:
-                case DeviceOrientation.LandscapeRight:
+                case ScreenOrientation.LandscapeLeft:
+                case ScreenOrientation.LandscapeRight:
                     ChangeUIOrientation(landscapeElements);
                     break;
             }
@@ -187,7 +187,7 @@ public class UIManager : MonoBehaviour
 
     private void ChangeUIOrientation(UIElements newElements)
     {
-        cachedOrientation = Input.deviceOrientation;
+        cachedOrientation = Screen.orientation;
         activeElements.container.SetActive(false);
         activeElements = newElements;
         activeElements.container.SetActive(true);
@@ -197,11 +197,14 @@ public class UIManager : MonoBehaviour
 
     private void ApplySavedLandscapeUILayout()
     {
-        // UI is set up to be right-joystick (1) by default. Swaps to left-joystick (0) if the PlayerPrefs calls for it.
-        // Do this even if the game is in the vertical layout in case the player rotates their device.
+        RectTransform foodContainer = landscapeElements.foodElements.container;
+        RectTransform capacityBar = landscapeElements.foodElements.capacityBar.container;
+        RectTransform joystick = landscapeElements.joystick;
+
+        // UI is set up to be right-joystick (1) by default.
+        // Do this even if the game is in the portrait layout in case the player rotates their device.
         if (PlayerPrefs.GetInt("JoystickPosition") == 0)
         {
-            RectTransform foodContainer = landscapeElements.foodElements.container;
             foodContainer.pivot = new Vector2(1, 0);
             foodContainer.anchorMin = new Vector2(1, 0);
             foodContainer.anchorMax = new Vector2(1, 0);
@@ -210,16 +213,33 @@ public class UIManager : MonoBehaviour
             landscapeElements.foodElements.seeds.layoutGroup.childAlignment = TextAnchor.MiddleRight;
             landscapeElements.foodElements.sandwiches.layoutGroup.childAlignment = TextAnchor.MiddleRight;
 
-            RectTransform capacityBar = landscapeElements.foodElements.capacityBar.container;
             capacityBar.anchorMin = new Vector2(1, 0);
             capacityBar.anchorMax = new Vector2(1, 0);
             capacityBar.anchoredPosition = new Vector2(-600, 0);
 
-            RectTransform joystick = landscapeElements.joystick;
             joystick.pivot = new Vector2(0, 0);
             joystick.anchorMin = new Vector2(0, 0);
             joystick.anchorMax = new Vector2(0, 0);
             joystick.anchoredPosition = new Vector2(150, 125);
+        }
+        else if (PlayerPrefs.GetInt("JoystickPosition") == 1)
+        {
+            foodContainer.pivot = new Vector2(0, 0);
+            foodContainer.anchorMin = new Vector2(0, 0);
+            foodContainer.anchorMax = new Vector2(0, 0);
+            foodContainer.anchoredPosition = new Vector2(40, 40);
+
+            landscapeElements.foodElements.seeds.layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+            landscapeElements.foodElements.sandwiches.layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+
+            capacityBar.anchorMin = new Vector2(0, 0);
+            capacityBar.anchorMax = new Vector2(0, 0);
+            capacityBar.anchoredPosition = new Vector2(0, 0);
+
+            joystick.pivot = new Vector2(1, 0);
+            joystick.anchorMin = new Vector2(1, 0);
+            joystick.anchorMax = new Vector2(1, 0);
+            joystick.anchoredPosition = new Vector2(-150, 125);
         }
     }
 }

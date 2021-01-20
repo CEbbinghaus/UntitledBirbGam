@@ -24,6 +24,7 @@ public abstract class ControllerButton : EventTrigger
 	{
 		buttonText.fontMaterial.DisableKeyword("GLOW_ON");
 		EventSystem.current.SetSelectedGameObject(null);
+		Debug.Log($"Pressed {this.GetType()}");
 	}
 
 	public override void OnPointerEnter(PointerEventData eventData)
