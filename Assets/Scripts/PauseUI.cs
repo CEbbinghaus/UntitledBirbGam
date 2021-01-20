@@ -88,10 +88,13 @@ public class PauseUI : MonoBehaviour
 		}
 	}
 
-	public void ChangeState(PauseState _state)
+	public void ChangeState(int _state) => ChangeState((PauseState)_state);
+
+	void ChangeState(PauseState _state)
 	{
 		state = _state;
 		progress = 0;
+		pauseFade.blocksRaycasts = ((int)_state - 1) == 1;
 	}
 
 	[ContextMenu("Fall")]
