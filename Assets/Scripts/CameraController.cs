@@ -18,10 +18,22 @@ public class CameraController : MonoBehaviour
 	[SerializeField] float snap = 2;
 
 	Camera camera;
+
+	Camera shadowcam;
+
 	// Start is called before the first frame update
 	void Start()
 	{
 		camera = GetComponent<Camera>();
+		shadowcam = new GameObject().AddComponent<Camera>();
+		shadowcam.CopyFrom(camera);
+
+		shadowcam.gameObject.SetActive(false);
+
+		var pos = shadowcam.transform.position;
+		pos.y = camera.transform.position.y;
+		shadowcam.transform.position = pos;
+
 		if (targetRB == null)
 			targetRB = target.GetComponent<Rigidbody>();
 	}
@@ -31,12 +43,20 @@ public class CameraController : MonoBehaviour
 	{
 		if (target == null)return;
 
+		var campos = camera.transform.position;
+		shadowcam.transform.position = new Vector3(campos.x, shadowcam.transform.position.y, campos.z);
+
 		//var frustumHeight = 2.0f * difference * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 
 		Vector2 maxSize = Vector2.zero;
 
 		foreach (Transform t in Targets)
 		{
+			var b = shadowcam.WorldToViewportPoint(t.transform.position);
+
+			if (!(b.x > -.5f && b.x < 1.5f && b.y > -.5f && b.y < 1.5f))
+				continue;
+
 			Vector3 dist = (target.position - t.transform.position);
 
 			if (Mathf.Abs(dist.x) > maxSize.x)
