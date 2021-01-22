@@ -80,6 +80,10 @@ public class SplashScene : MonoBehaviour
 		// 	yield return null;
 		// }
 		FinishedLoading = true;
+		//This will cause it to Load the Main menu as soon as its done.
+		//It should be replaced with a Animation or script that calles the SplashDone method after showing logos
+
+		SplashDone();
 		yield return null;
 	}
 
