@@ -13,6 +13,14 @@ public class UIManager : MonoBehaviour
         {
             public RectTransform container;
             public List<Image> icons = new List<Image>();
+
+            public void UpdateUI(int livesRemaining)
+            {
+                for (int i = livesRemaining; i < 3; i++)
+                {
+                    icons[i].enabled = false;
+                }
+            }
         }
         [Serializable] public class FoodElements
         {
@@ -22,6 +30,33 @@ public class UIManager : MonoBehaviour
                 public HorizontalLayoutGroup layoutGroup;
                 public List<Image> icons = new List<Image>(5);
                 public TextMeshProUGUI overflowCounter;
+
+                public void UpdateUI(int collected)
+                {
+                    if (collected == 0) return;
+
+                    int maxSprites = icons.Count;
+
+                    // Draw sprites equal to the number of items
+                    if (collected < maxSprites)
+                    {
+                        for (int i = 1; i < maxSprites; i++)
+                        {
+                            icons[collected - 1].gameObject.SetActive(true);
+                        }
+                    }
+                    // Draw the shorthand x[number] version 
+                    else
+                    {
+                        icons[0].gameObject.SetActive(true);
+                        for (int i = 1; i < maxSprites; i++)
+                        {
+                            icons[i].gameObject.SetActive(false);
+                        }
+                        overflowCounter.gameObject.SetActive(true);
+                        overflowCounter.text = $"x{collected}";
+                    }
+                }
             }
             [Serializable] public class FoodCapacityBar
             {
@@ -34,16 +69,22 @@ public class UIManager : MonoBehaviour
             public FoodHolder sandwiches;
             public FoodCapacityBar capacityBar;
         }
-
+        [Serializable] public class JoystickElements
+        {
+            public RectTransform container;
+            public bl_Joystick joystick;
+        }
         public GameObject container;
         public RectTransform pauseIcon;
         public UICounter scoreText;
-        public RectTransform joystick;
+        public JoystickElements joystickElements;
         public LifeElements lifeElements;
         public FoodElements foodElements;
     }
 
     public static UIManager instance;
+
+    public ScreenOrientation DEBUGOrientation = ScreenOrientation.Portrait;
 
     public bool debugTouch = true;
 
@@ -61,8 +102,22 @@ public class UIManager : MonoBehaviour
     PlayerManager playerManager;
     Image activeCapacityBar;
 
+    private int cachedCollectedSeeds;
+    private int cachedCollectedSandwiches;
+    private int cachedRemainingLives;
+    public int cachedScore;
+
+    public int CachedCollectedSeeds { get => cachedCollectedSeeds; set { activeElements.foodElements.seeds.UpdateUI(value); cachedCollectedSeeds = value; } }
+    public int CachedCollectedSandwiches { get => cachedCollectedSandwiches; set { activeElements.foodElements.sandwiches.UpdateUI(value); cachedCollectedSandwiches = value; } }
+    public int CachedRemainingLives { get => cachedRemainingLives; set { activeElements.lifeElements.UpdateUI(value); cachedRemainingLives = value; } }
+
+    // Events
+    public static event OnChangeUIOrientation onChangeUIOrientation;
+    public delegate void OnChangeUIOrientation(ScreenOrientation orientation);
+
     private void Awake()
     {
+        // Singleton
         if (instance)
         {
             this.enabled = false;
@@ -82,28 +137,29 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        cachedOrientation = Screen.orientation;
+        cachedOrientation = DEBUGOrientation;
         if (Input.touchSupported || debugTouch)
         {
             // Update the horizontal UI
             ApplySavedLandscapeUILayout();
             // Enable the pause button
             landscapeElements.pauseIcon.gameObject.SetActive(true);
-            //portraitElements.pauseIcon.gameObject.SetActive(true);
-            
+            portraitElements.pauseIcon.gameObject.SetActive(true);
+
             // Set the UI Layout
-            switch (Screen.orientation)
+            //switch (Screen.orientation)
+            switch (DEBUGOrientation)
             {
                 case ScreenOrientation.Portrait:
                     activeElements = portraitElements;
                     ChangeUIOrientation(portraitElements);
-                    portraitElements.container.SetActive(true);
+                    landscapeElements.container.SetActive(false);
                     break;
                 case ScreenOrientation.LandscapeLeft:
                 case ScreenOrientation.LandscapeRight:
                     activeElements = landscapeElements;
                     ChangeUIOrientation(landscapeElements);
-                    landscapeElements.container.SetActive(true);
+                    portraitElements.container.SetActive(false);
                     break;
                 default:
                     // Treat the game as if it is in landscape mode by default
@@ -116,9 +172,11 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         // Update the UI elements if the orientation has changed to abother valid orientation
-        if (Screen.orientation != cachedOrientation)
+        //if (Screen.orientation != cachedOrientation)
+        if (DEBUGOrientation != cachedOrientation)
         {
-            switch (Screen.orientation)
+            //switch (Screen.orientation)
+            switch (DEBUGOrientation)
             {
                 case ScreenOrientation.Portrait:
                     ChangeUIOrientation(portraitElements);
@@ -134,39 +192,6 @@ public class UIManager : MonoBehaviour
         if (playerManager && activeCapacityBar.fillAmount != Mathf.Min(playerManager.FoodEncumbrance(), 1))
         {
             activeCapacityBar.fillAmount = Mathf.Lerp(activeCapacityBar.fillAmount, Mathf.Min(playerManager.FoodEncumbrance(), 1), Time.deltaTime);
-        }
-    }
-
-    public void UpdateLivesUI(int livesRemaining)
-    {
-        for (int i = livesRemaining; i < 3; i++)
-        {
-            activeElements.lifeElements.icons[i].enabled = false;
-        }
-    }
-
-    public void UpdateFoodUI(UIElements.FoodElements.FoodHolder holder, int collected)
-    {
-        if (collected == 0)
-        {
-
-            return;
-        }
-        if (collected < 5)
-        {
-            for (int i = 1; i < 5; i++)
-            {
-                holder.icons[collected - 1].gameObject.SetActive(true);
-            }
-        }
-        else
-        {
-            for (int i = 1; i < 5; i++)
-            {
-                holder.icons[i].gameObject.SetActive(false);
-            }
-            holder.overflowCounter.gameObject.SetActive(true);
-            holder.overflowCounter.text = $"x{collected}";
         }
     }
 
@@ -187,19 +212,29 @@ public class UIManager : MonoBehaviour
 
     private void ChangeUIOrientation(UIElements newElements)
     {
-        cachedOrientation = Screen.orientation;
+        cachedOrientation = DEBUGOrientation;
         activeElements.container.SetActive(false);
+
+        // Syncing values
+        newElements.foodElements.capacityBar.fill.fillAmount = activeElements.foodElements.capacityBar.fill.fillAmount;
+        newElements.scoreText.QuickSetValue(cachedScore);
+        newElements.foodElements.sandwiches.UpdateUI(CachedCollectedSandwiches);
+        newElements.foodElements.seeds.UpdateUI(CachedCollectedSeeds);
+        newElements.lifeElements.UpdateUI(CachedRemainingLives);
+
+
         activeElements = newElements;
         activeElements.container.SetActive(true);
 
         activeCapacityBar = activeElements.foodElements.capacityBar.fill;
+        onChangeUIOrientation?.Invoke(cachedOrientation);
     }
 
     private void ApplySavedLandscapeUILayout()
     {
         RectTransform foodContainer = landscapeElements.foodElements.container;
         RectTransform capacityBar = landscapeElements.foodElements.capacityBar.container;
-        RectTransform joystick = landscapeElements.joystick;
+        RectTransform joystick = landscapeElements.joystickElements.container;
 
         // UI is set up to be right-joystick (1) by default.
         // Do this even if the game is in the portrait layout in case the player rotates their device.

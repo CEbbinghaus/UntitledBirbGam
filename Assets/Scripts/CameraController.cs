@@ -18,6 +18,12 @@ public class CameraController : MonoBehaviour
 	[SerializeField] float snap = 2;
 
 	Camera camera;
+
+	private void Awake()
+	{
+		UIManager.onChangeUIOrientation += ChangeMinHeight;
+	}
+
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -90,5 +96,20 @@ public class CameraController : MonoBehaviour
 	private void OnDrawGizmos()
 	{
 		Gizmos.DrawWireCube(bounds.center, bounds.extents);
+	}
+
+	void ChangeMinHeight(ScreenOrientation orientation)
+	{
+		switch (orientation)
+		{
+			case ScreenOrientation.Portrait:
+				minDistance = 30;
+				break;
+			case ScreenOrientation.Landscape:
+				minDistance = 20;
+				break;
+			default:
+				goto case ScreenOrientation.Landscape;
+		}
 	}
 }

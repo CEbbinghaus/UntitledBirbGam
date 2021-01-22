@@ -76,7 +76,7 @@ public class PlayerManager : MonoBehaviour
 				m_FoodCollected++;
 				collectedSeeds++;
 
-				UIManager.instance.UpdateFoodUI(UIManager.instance.activeElements.foodElements.seeds, collectedSeeds);
+				UIManager.instance.CachedCollectedSeeds = collectedSeeds;
 				break;
 			case "Sandwich":
 				other.gameObject.SetActive(false);
@@ -86,7 +86,7 @@ public class PlayerManager : MonoBehaviour
 				m_FoodCollected += m_SandwichPoints;
 				collectedSandwiches++;
 
-				UIManager.instance.UpdateFoodUI(UIManager.instance.activeElements.foodElements.sandwiches, collectedSandwiches);
+				UIManager.instance.CachedCollectedSandwiches = collectedSandwiches;
 				break;
 		}
 	}
@@ -130,6 +130,7 @@ public class PlayerManager : MonoBehaviour
 			// Update score
 			m_Score += m_FoodCollected;
 			UIManager.instance.activeElements.scoreText.SetValue(m_Score);
+			UIManager.instance.cachedScore += m_Score;
 
 			// Reset collected food
 			m_FoodCollected = 0;
@@ -144,7 +145,7 @@ public class PlayerManager : MonoBehaviour
 	public void TakeDamage()
 	{
 		m_Lives--;
-		UIManager.instance.UpdateLivesUI(m_Lives);
+		UIManager.instance.CachedRemainingLives = m_Lives;
 		AudioManager.PlaySound("WillHit", transform.position);
 
 		// If the player is out of lives, show the end screen

@@ -70,7 +70,7 @@ public class UICounter : MonoBehaviour
 	{
 
 		//Increase the current Time until it hits one
-		if (time < 1)
+		if (time < 1 && Value != _valueTarget)
 		{
 
 			var divider = Duration;
@@ -87,8 +87,7 @@ public class UICounter : MonoBehaviour
 			//Check if this is the frame in which it hits one and will call the Callback letting the 
 			if (_value != _valueTarget)
 			{
-				if (Callback != null)
-					Callback(_valueTarget);
+				Callback?.Invoke(_valueTarget);
 			}
 		}
 
@@ -96,6 +95,13 @@ public class UICounter : MonoBehaviour
 		if (_value != _valueTarget)
 			_value = Mathf.RoundToInt(Mathf.SmoothStep(_valueOrigin, _valueTarget, time));
 
+		text.text = string.Format(Format, _value);
+	}
+
+	public void QuickSetValue(int _value)
+	{
+		Value = _value;
+		_valueTarget = _value;
 		text.text = string.Format(Format, _value);
 	}
 }

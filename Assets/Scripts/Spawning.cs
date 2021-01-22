@@ -25,6 +25,7 @@ internal class Spawning : Singleton<Spawning>
 	{
 		RegisterInstance(this, true);
 
+		transform.parent = null;
 		DontDestroyOnLoad(this.gameObject);
 
 		spawnables = new List<Food>(Resources.FindObjectsOfTypeAll<Food>());
