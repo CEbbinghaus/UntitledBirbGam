@@ -18,6 +18,9 @@ public class Food : MonoBehaviour
 	[SerializeField]
 	float rotationSpeed = 5f;
 
+	[SerializeField]
+	public bool ForcedSpawn = false;
+
 	float offset;
 
 	void Awake()

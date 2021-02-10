@@ -19,7 +19,7 @@ internal class Spawning : Singleton<Spawning>
 
 	[SerializeField]
 	List<Food> spawnables;
-	List<Food> despawned;
+	List<Food> despawned = new List<Food>();
 
 	void Awake()
 	{
@@ -40,6 +40,8 @@ internal class Spawning : Singleton<Spawning>
 
 		foreach (Food spawn in spawnables)
 		{
+			if (spawn.ForcedSpawn)continue;
+
 			if (Random.Range(0f, 1f) > PercentageSpawn)
 				spawn.gameObject.SetActive(false);
 		}

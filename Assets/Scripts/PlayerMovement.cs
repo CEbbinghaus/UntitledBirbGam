@@ -72,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		Vector3 playerDir = Vector3.forward;
 
-		if (joystick != null || Application.isMobilePlatform)
+		if (joystick != null && Application.isMobilePlatform)
 			playerDir = new Vector3(joystick.Horizontal, 0, joystick.Vertical).normalized;
 		else
 			playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
@@ -105,5 +105,5 @@ public class PlayerMovement : MonoBehaviour
 	public void UpdateActiveJoystick(ScreenOrientation orientation)
 	{
 		joystick = UIManager.instance.activeElements.joystickElements.joystick;
-	} 
+	}
 }
