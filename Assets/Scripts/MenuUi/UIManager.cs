@@ -129,7 +129,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        if (Input.touchSupported)
+        if (Application.isMobilePlatform)
         {
             // Update the horizontal UI
             ApplySavedLandscapeUILayout();
@@ -139,7 +139,6 @@ public class UIManager : MonoBehaviour
 
             // Set the UI Layout
             switch (Screen.orientation)
-            //switch (DEBUGOrientation)
             {
                 case ScreenOrientation.Portrait:
                     activeElements = portraitElements;
@@ -156,6 +155,10 @@ public class UIManager : MonoBehaviour
                     // Treat the game as if it is in landscape mode by default
                     goto case ScreenOrientation.LandscapeRight;
             }
+        }
+        else
+        {
+            portraitElements.container.SetActive(false);
         }
     }
 
