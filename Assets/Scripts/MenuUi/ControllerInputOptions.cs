@@ -101,7 +101,6 @@ public class ControllerInputOptions : MonoBehaviour
 
     private void OnDisable()
     {
-        print("Resetting");
         SetSelectedSlider(null);
     }
 }

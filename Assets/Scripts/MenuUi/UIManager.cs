@@ -61,7 +61,7 @@ public class UIManager : MonoBehaviour
             [Serializable] public class FoodCapacityBar
             {
                 public RectTransform container;
-                public Image fill;
+                public CapacityBar bar;
             }
 
             public RectTransform container;
@@ -84,10 +84,6 @@ public class UIManager : MonoBehaviour
 
     public static UIManager instance;
 
-    public ScreenOrientation DEBUGOrientation = ScreenOrientation.Portrait;
-
-    public bool debugTouch = true;
-
     [Space(10)]
     public UIElements landscapeElements;
     public UIElements portraitElements;
@@ -98,22 +94,16 @@ public class UIManager : MonoBehaviour
     public UICounter m_FinalScore = null;
 
     // Cached values and elements
-    ScreenOrientation cachedOrientation;
     PlayerManager playerManager;
-    Image activeCapacityBar;
 
-    private int cachedCollectedSeeds;
-    private int cachedCollectedSandwiches;
-    private int cachedRemainingLives;
-    public int cachedScore;
+    private int cachedCollectedSeeds = 0;
+    private int cachedCollectedSandwiches = 0;
+    private int cachedRemainingLives = 3;
+    public int cachedScore = 0;
 
     public int CachedCollectedSeeds { get => cachedCollectedSeeds; set { activeElements.foodElements.seeds.UpdateUI(value); cachedCollectedSeeds = value; } }
     public int CachedCollectedSandwiches { get => cachedCollectedSandwiches; set { activeElements.foodElements.sandwiches.UpdateUI(value); cachedCollectedSandwiches = value; } }
     public int CachedRemainingLives { get => cachedRemainingLives; set { activeElements.lifeElements.UpdateUI(value); cachedRemainingLives = value; } }
-
-    // Events
-    public static event OnChangeUIOrientation onChangeUIOrientation;
-    public delegate void OnChangeUIOrientation(ScreenOrientation orientation);
 
     private void Awake()
     {
@@ -132,13 +122,14 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("No player found!");
         }
+
+        OrientationManager.onChangeUIOrientation += UpdateOrientation;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        cachedOrientation = DEBUGOrientation;
-        if (Input.touchSupported || debugTouch)
+        if (Input.touchSupported)
         {
             // Update the horizontal UI
             ApplySavedLandscapeUILayout();
@@ -147,18 +138,18 @@ public class UIManager : MonoBehaviour
             portraitElements.pauseIcon.gameObject.SetActive(true);
 
             // Set the UI Layout
-            //switch (Screen.orientation)
-            switch (DEBUGOrientation)
+            switch (Screen.orientation)
+            //switch (DEBUGOrientation)
             {
                 case ScreenOrientation.Portrait:
                     activeElements = portraitElements;
-                    ChangeUIOrientation(portraitElements);
+                    UpdateOrientation(ScreenOrientation.Portrait);
                     landscapeElements.container.SetActive(false);
                     break;
                 case ScreenOrientation.LandscapeLeft:
                 case ScreenOrientation.LandscapeRight:
                     activeElements = landscapeElements;
-                    ChangeUIOrientation(landscapeElements);
+                    UpdateOrientation(ScreenOrientation.Landscape);
                     portraitElements.container.SetActive(false);
                     break;
                 default:
@@ -168,31 +159,35 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    private void Update()
+    public void UpdateOrientation(ScreenOrientation orientation)
     {
-        // Update the UI elements if the orientation has changed to abother valid orientation
-        //if (Screen.orientation != cachedOrientation)
-        if (DEBUGOrientation != cachedOrientation)
+        UIElements newElements;
+
+        switch (Screen.orientation)
         {
-            //switch (Screen.orientation)
-            switch (DEBUGOrientation)
-            {
-                case ScreenOrientation.Portrait:
-                    ChangeUIOrientation(portraitElements);
-                    break;
-                case ScreenOrientation.LandscapeLeft:
-                case ScreenOrientation.LandscapeRight:
-                    ChangeUIOrientation(landscapeElements);
-                    break;
-            }
+            case ScreenOrientation.Portrait:
+                newElements = portraitElements;
+                break;
+            case ScreenOrientation.LandscapeLeft:
+            case ScreenOrientation.LandscapeRight:
+                newElements = landscapeElements;
+                break;
+            default:
+                return;
         }
 
-        // Update the capacity bar if the target value is different
-        if (playerManager && activeCapacityBar.fillAmount != Mathf.Min(playerManager.FoodEncumbrance(), 1))
-        {
-            activeCapacityBar.fillAmount = Mathf.Lerp(activeCapacityBar.fillAmount, Mathf.Min(playerManager.FoodEncumbrance(), 1), Time.deltaTime);
-        }
+        activeElements.container.SetActive(false);
+
+        // Syncing values
+        newElements.foodElements.capacityBar.bar.image.fillAmount = activeElements.foodElements.capacityBar.bar.image.fillAmount;
+        newElements.scoreText.QuickSetValue(cachedScore);
+        newElements.foodElements.sandwiches.UpdateUI(CachedCollectedSandwiches);
+        newElements.foodElements.seeds.UpdateUI(CachedCollectedSeeds);
+        newElements.lifeElements.UpdateUI(CachedRemainingLives);
+
+
+        activeElements = newElements;
+        activeElements.container.SetActive(true);
     }
 
     public void ClearFoodUI()
@@ -210,26 +205,9 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
-    private void ChangeUIOrientation(UIElements newElements)
-    {
-        cachedOrientation = DEBUGOrientation;
-        activeElements.container.SetActive(false);
-
-        // Syncing values
-        newElements.foodElements.capacityBar.fill.fillAmount = activeElements.foodElements.capacityBar.fill.fillAmount;
-        newElements.scoreText.QuickSetValue(cachedScore);
-        newElements.foodElements.sandwiches.UpdateUI(CachedCollectedSandwiches);
-        newElements.foodElements.seeds.UpdateUI(CachedCollectedSeeds);
-        newElements.lifeElements.UpdateUI(CachedRemainingLives);
-
-
-        activeElements = newElements;
-        activeElements.container.SetActive(true);
-
-        activeCapacityBar = activeElements.foodElements.capacityBar.fill;
-        onChangeUIOrientation?.Invoke(cachedOrientation);
-    }
-
+    /// <summary>
+    /// Updates which side the joystick is on
+    /// </summary>
     private void ApplySavedLandscapeUILayout()
     {
         RectTransform foodContainer = landscapeElements.foodElements.container;

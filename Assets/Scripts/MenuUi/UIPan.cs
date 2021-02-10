@@ -39,7 +39,6 @@ public class UIPan : MonoBehaviour
 	[NonSerialized] public UIPanElement activeCredits;
 	[SerializeField]
 	CanvasGroup fade = new CanvasGroup();
-	ScreenOrientation cachedOrientation;
 
 	private void Awake()
 	{
@@ -51,6 +50,8 @@ public class UIPan : MonoBehaviour
 		{
 			instance = this;
 		}
+
+		OrientationManager.onChangeUIOrientation += UpdateOrientation;
 	}
 
 	// Start is called before the first frame update
@@ -58,6 +59,7 @@ public class UIPan : MonoBehaviour
     {
 		screenSize = new Vector2Int(Screen.width, Screen.height);
 		int largerDimension = screenSize.x > screenSize.y ? screenSize.x : screenSize.y;
+		print(largerDimension);
 		optionsLandscape.cachedLocation = optionsLandscape.transform.anchoredPosition;
 		optionsPortrait.cachedLocation = optionsPortrait.transform.anchoredPosition;
 		creditsLandscape.cachedLocation = creditsLandscape.transform.anchoredPosition;
@@ -69,29 +71,22 @@ public class UIPan : MonoBehaviour
 		creditsLandscape.transform.anchoredPosition = new Vector2(largerDimension, creditsLandscape.cachedLocation.y);
 		creditsPortrait.transform.anchoredPosition = new Vector2(creditsPortrait.cachedLocation.x, largerDimension);
 
-		UpdateOrientation();
+		UpdateOrientation(Screen.orientation);
 	}
 
     // Update is called once per frame
     void Update()
 	{
-		//if (Screen.orientation != cachedOrientation)
-		if (ControllerInputMenu.instance.DEBUGOrientation != cachedOrientation)
-		{
-			UpdateOrientation();
-		}
 		AnimateElement(activeCredits);
 		AnimateElement(activeOptions);
 	}
 
-	void UpdateOrientation()
+	void UpdateOrientation(ScreenOrientation screenOrientation)
 	{
-		//switch (Screen.orientation)
-		switch (ControllerInputMenu.instance.DEBUGOrientation)
+		switch (screenOrientation)
 		{
 			case ScreenOrientation.Portrait:
 				// Set new orientation
-				cachedOrientation = ScreenOrientation.Portrait;
 				// Toggle active UI
 				portraitUI.SetActive(true);
 				landscapeUI.SetActive(false);
@@ -106,7 +101,6 @@ public class UIPan : MonoBehaviour
 			case ScreenOrientation.LandscapeLeft:
 			case ScreenOrientation.LandscapeRight:
 				// Set new orientation
-				cachedOrientation = ScreenOrientation.Landscape;
 				// Toggle active UI
 				landscapeUI.SetActive(true);
 				portraitUI.SetActive(false);
@@ -121,14 +115,15 @@ public class UIPan : MonoBehaviour
 			default:
 				goto case ScreenOrientation.LandscapeRight;
 		}
-
 		// Force the menus into the correct locations
 		UIPanElement submenu = ControllerInputMenu.instance.activeSubMenu;
+		if (submenu == null) return;
+
 		if (activeCredits != submenu)
 			activeCredits.transform.anchoredPosition = new Vector3(activeCredits.movementCurveXOffscreen.Evaluate(1) * screenSize.x, activeCredits.movementCurveYOffscreen.Evaluate(1) * screenSize.y);
 		if (activeOptions != submenu)
 			activeOptions.transform.anchoredPosition = new Vector3(activeOptions.movementCurveXOffscreen.Evaluate(1) * screenSize.x, activeOptions.movementCurveYOffscreen.Evaluate(1) * screenSize.y);
-		if (submenu.transform && submenu.progress == 0)
+		if (submenu != null && submenu.progress == 0)
 			submenu.transform.anchoredPosition = submenu.cachedLocation;
 	}
 

@@ -65,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
 		if (joystick == null)
 			Debug.LogWarning("Joystick needs to be assigned for mobile to work");
 
-		UIManager.onChangeUIOrientation += UpdateActiveJoystick;
+		OrientationManager.onChangeUIOrientation += UpdateActiveJoystick;
 	}
 
 	void Update()

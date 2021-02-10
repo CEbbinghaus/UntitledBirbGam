@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,9 +13,9 @@ public enum MenuState
 public class ControllerInputMenu : MonoBehaviour
 {
     public static ControllerInputMenu instance;
-    public ScreenOrientation DEBUGOrientation;
+    //public ScreenOrientation DEBUGOrientation;
     public MenuState menuState = MenuState.Menu;
-    public UIPanElement activeSubMenu;
+    [NonSerialized] public UIPanElement activeSubMenu;
     public float holdDelay = 0.5f;
     public float sensitivity = 0.3f;
     float timer = 0;
@@ -37,7 +37,8 @@ public class ControllerInputMenu : MonoBehaviour
         {
             instance = this;
         }
-        Screen.orientation = DEBUGOrientation;
+
+        OrientationManager.onChangeUIOrientation += UpdateOrientation;
     }
 
     private void Start()
@@ -64,16 +65,11 @@ public class ControllerInputMenu : MonoBehaviour
                 setIndex++;
             }
         }
-        UpdateOrientation();
+        UpdateOrientation(Screen.orientation);
     }
 
     void Update()
     {
-        //if (Screen.orientation != cachedOrientation)
-        if (DEBUGOrientation != cachedOrientation)
-        {
-            UpdateOrientation();
-        }
         switch (menuState)
         {
             case MenuState.Menu:
@@ -136,10 +132,9 @@ public class ControllerInputMenu : MonoBehaviour
         }
     }
 
-    void UpdateOrientation()
+    void UpdateOrientation(ScreenOrientation screenOrientation)
     {
-        //switch (Screen.orientation)
-        switch (DEBUGOrientation)
+        switch (screenOrientation)
         {
             case ScreenOrientation.Portrait:
                 cachedOrientation = ScreenOrientation.Portrait;
