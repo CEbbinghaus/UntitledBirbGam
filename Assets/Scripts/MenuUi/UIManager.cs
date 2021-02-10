@@ -7,255 +7,257 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [Serializable] public class UIElements
-    {
-        [Serializable] public class LifeElements
-        {
-            public RectTransform container;
-            public List<Image> icons = new List<Image>();
+	[Serializable] public class UIElements
+	{
+		[Serializable] public class LifeElements
+		{
+			public RectTransform container;
+			public List<Image> icons = new List<Image>();
 
-            public void UpdateUI(int livesRemaining)
-            {
-                for (int i = livesRemaining; i < 3; i++)
-                {
-                    icons[i].enabled = false;
-                }
-            }
-        }
-        [Serializable] public class FoodElements
-        {
-            [Serializable] public class FoodHolder
-            {
-                public RectTransform container;
-                public HorizontalLayoutGroup layoutGroup;
-                public List<Image> icons = new List<Image>(5);
-                public TextMeshProUGUI overflowCounter;
+			public void UpdateUI(int livesRemaining)
+			{
+				for (int i = livesRemaining; i < 3; i++)
+				{
+					icons[i].enabled = false;
+				}
+			}
+		}
 
-                public void UpdateUI(int collected)
-                {
-                    if (collected == 0) return;
+		[Serializable] public class FoodElements
+		{
+			[Serializable] public class FoodHolder
+			{
+				public RectTransform container;
+				public HorizontalLayoutGroup layoutGroup;
+				public List<Image> icons = new List<Image>(5);
+				public TextMeshProUGUI overflowCounter;
 
-                    int maxSprites = icons.Count;
+				public void UpdateUI(int collected)
+				{
+					if (collected == 0)return;
 
-                    // Draw sprites equal to the number of items
-                    if (collected < maxSprites)
-                    {
-                        for (int i = 1; i < maxSprites; i++)
-                        {
-                            icons[collected - 1].gameObject.SetActive(true);
-                        }
-                    }
-                    // Draw the shorthand x[number] version 
-                    else
-                    {
-                        icons[0].gameObject.SetActive(true);
-                        for (int i = 1; i < maxSprites; i++)
-                        {
-                            icons[i].gameObject.SetActive(false);
-                        }
-                        overflowCounter.gameObject.SetActive(true);
-                        overflowCounter.text = $"x{collected}";
-                    }
-                }
-            }
-            [Serializable] public class FoodCapacityBar
-            {
-                public RectTransform container;
-                public CapacityBar bar;
-            }
+					int maxSprites = icons.Count;
 
-            public RectTransform container;
-            public FoodHolder seeds;
-            public FoodHolder sandwiches;
-            public FoodCapacityBar capacityBar;
-        }
-        [Serializable] public class JoystickElements
-        {
-            public RectTransform container;
-            public bl_Joystick joystick;
-        }
-        public GameObject container;
-        public RectTransform pauseIcon;
-        public UICounter scoreText;
-        public JoystickElements joystickElements;
-        public LifeElements lifeElements;
-        public FoodElements foodElements;
-    }
+					// Draw sprites equal to the number of items
+					if (collected < maxSprites)
+					{
+						for (int i = 1; i < maxSprites; i++)
+						{
+							icons[collected - 1].gameObject.SetActive(true);
+						}
+					}
+					// Draw the shorthand x[number] version 
+					else
+					{
+						icons[0].gameObject.SetActive(true);
+						for (int i = 1; i < maxSprites; i++)
+						{
+							icons[i].gameObject.SetActive(false);
+						}
+						overflowCounter.gameObject.SetActive(true);
+						overflowCounter.text = $"x{collected}";
+					}
+				}
+			}
 
-    public static UIManager instance;
+			[Serializable] public class FoodCapacityBar
+			{
+				public RectTransform container;
+				public CapacityBar bar;
+			}
 
-    [Space(10)]
-    public UIElements landscapeElements;
-    public UIElements portraitElements;
-    public UIElements activeElements;
+			public RectTransform container;
+			public FoodHolder seeds;
+			public FoodHolder sandwiches;
+			public FoodCapacityBar capacityBar;
+		}
 
-    [Space(10)]
-    public GameObject m_EndScreen = null;
-    public UICounter m_FinalScore = null;
+		[Serializable] public class JoystickElements
+		{
+			public RectTransform container;
+			public bl_Joystick joystick;
+		}
+		public GameObject container;
+		public RectTransform pauseIcon;
+		public UICounter scoreText;
+		public JoystickElements joystickElements;
+		public LifeElements lifeElements;
+		public FoodElements foodElements;
+	}
 
-    // Cached values and elements
-    PlayerManager playerManager;
+	public static UIManager instance;
 
-    private int cachedCollectedSeeds = 0;
-    private int cachedCollectedSandwiches = 0;
-    private int cachedRemainingLives = 3;
-    public int cachedScore = 0;
+	[Space(10)]
+	public UIElements landscapeElements;
+	public UIElements portraitElements;
+	public UIElements activeElements;
 
-    public int CachedCollectedSeeds { get => cachedCollectedSeeds; set { activeElements.foodElements.seeds.UpdateUI(value); cachedCollectedSeeds = value; } }
-    public int CachedCollectedSandwiches { get => cachedCollectedSandwiches; set { activeElements.foodElements.sandwiches.UpdateUI(value); cachedCollectedSandwiches = value; } }
-    public int CachedRemainingLives { get => cachedRemainingLives; set { activeElements.lifeElements.UpdateUI(value); cachedRemainingLives = value; } }
+	[Space(10)]
+	public GameObject m_EndScreen = null;
+	public UICounter m_FinalScore = null;
 
-    private void Awake()
-    {
-        // Singleton
-        if (instance)
-        {
-            this.enabled = false;
-        }
-        else
-        {
-            instance = this;
-        }
+	// Cached values and elements
+	PlayerManager playerManager;
 
-        playerManager = FindObjectOfType<PlayerManager>();
-        if (playerManager == null)
-        {
-            Debug.LogError("No player found!");
-        }
+	private int cachedCollectedSeeds = 0;
+	private int cachedCollectedSandwiches = 0;
+	private int cachedRemainingLives = 3;
+	public int cachedScore = 0;
 
-        OrientationManager.onChangeUIOrientation += UpdateOrientation;
-    }
+	public int CachedCollectedSeeds { get => cachedCollectedSeeds; set { activeElements.foodElements.seeds.UpdateUI(value); cachedCollectedSeeds = value; } }
+	public int CachedCollectedSandwiches { get => cachedCollectedSandwiches; set { activeElements.foodElements.sandwiches.UpdateUI(value); cachedCollectedSandwiches = value; } }
+	public int CachedRemainingLives { get => cachedRemainingLives; set { activeElements.lifeElements.UpdateUI(value); cachedRemainingLives = value; } }
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-        if (Application.isMobilePlatform)
-        {
-            // Update the horizontal UI
-            ApplySavedLandscapeUILayout();
-            // Enable the pause button
-            landscapeElements.pauseIcon.gameObject.SetActive(true);
-            portraitElements.pauseIcon.gameObject.SetActive(true);
+	private void Awake()
+	{
+		// Singleton
+		if (instance)
+		{
+			this.enabled = false;
+		}
+		else
+		{
+			instance = this;
+		}
 
-            // Set the UI Layout
-            switch (Screen.orientation)
-            {
-                case ScreenOrientation.Portrait:
-                    activeElements = portraitElements;
-                    UpdateOrientation(ScreenOrientation.Portrait);
-                    landscapeElements.container.SetActive(false);
-                    break;
-                case ScreenOrientation.LandscapeLeft:
-                case ScreenOrientation.LandscapeRight:
-                    activeElements = landscapeElements;
-                    UpdateOrientation(ScreenOrientation.Landscape);
-                    portraitElements.container.SetActive(false);
-                    break;
-                default:
-                    // Treat the game as if it is in landscape mode by default
-                    goto case ScreenOrientation.LandscapeRight;
-            }
-        }
-        else
-        {
-            portraitElements.container.SetActive(false);
-        }
-    }
+		playerManager = FindObjectOfType<PlayerManager>();
+		if (playerManager == null)
+		{
+			Debug.LogError("No player found!");
+		}
 
-    public void UpdateOrientation(ScreenOrientation orientation)
-    {
-        UIElements newElements;
+		//OrientationManager.onChangeUIOrientation += UpdateOrientation;
+	}
 
-        switch (Screen.orientation)
-        {
-            case ScreenOrientation.Portrait:
-                newElements = portraitElements;
-                break;
-            case ScreenOrientation.LandscapeLeft:
-            case ScreenOrientation.LandscapeRight:
-                newElements = landscapeElements;
-                break;
-            default:
-                return;
-        }
+	// Start is called before the first frame update
+	private void Start()
+	{
+		if (Input.touchSupported)
+		{
+			// Update the horizontal UI
+			ApplySavedLandscapeUILayout();
+			// Enable the pause button
+			landscapeElements.pauseIcon.gameObject.SetActive(true);
+			portraitElements.pauseIcon.gameObject.SetActive(true);
 
-        activeElements.container.SetActive(false);
+			// Set the UI Layout
+			// 	switch (Screen.orientation)
+			// 	//switch (DEBUGOrientation)
+			// 	{
+			// 		case ScreenOrientation.Portrait:
+			// 			activeElements = portraitElements;
+			// 			UpdateOrientation(ScreenOrientation.Portrait);
+			// 			landscapeElements.container.SetActive(false);
+			// 			break;
+			// 		case ScreenOrientation.LandscapeLeft:
+			// 		case ScreenOrientation.LandscapeRight:
+			activeElements = landscapeElements;
+			portraitElements.container.SetActive(false);
+			// 			UpdateOrientation(ScreenOrientation.Landscape);
+			// 			break;
+			// 		default:
+			// 			// Treat the game as if it is in landscape mode by default
+			// 			goto case ScreenOrientation.LandscapeRight;
+			// 	}
+		}
+		activeElements = landscapeElements;
+		portraitElements.container.SetActive(false);
+	}
 
-        // Syncing values
-        newElements.foodElements.capacityBar.bar.image.fillAmount = activeElements.foodElements.capacityBar.bar.image.fillAmount;
-        newElements.scoreText.QuickSetValue(cachedScore);
-        newElements.foodElements.sandwiches.UpdateUI(CachedCollectedSandwiches);
-        newElements.foodElements.seeds.UpdateUI(CachedCollectedSeeds);
-        newElements.lifeElements.UpdateUI(CachedRemainingLives);
+	// public void UpdateOrientation(ScreenOrientation orientation)
+	// {
+	// 	UIElements newElements;
 
+	// 	switch (Screen.orientation)
+	// 	{
+	// 		case ScreenOrientation.Portrait:
+	// 			newElements = portraitElements;
+	// 			break;
+	// 		case ScreenOrientation.LandscapeLeft:
+	// 		case ScreenOrientation.LandscapeRight:
+	// 			newElements = landscapeElements;
+	// 			break;
+	// 		default:
+	// 			return;
+	// 	}
 
-        activeElements = newElements;
-        activeElements.container.SetActive(true);
-    }
+	// 	activeElements.container.SetActive(false);
 
-    public void ClearFoodUI()
-    {
-        activeElements.foodElements.sandwiches.icons.ForEach(image => image.gameObject.SetActive(false));
-        activeElements.foodElements.sandwiches.overflowCounter.gameObject.SetActive(false);
-        activeElements.foodElements.seeds.icons.ForEach(image => image.gameObject.SetActive(false));
-        activeElements.foodElements.seeds.overflowCounter.gameObject.SetActive(false);
-    }
+	// 	// Syncing values
+	// 	newElements.foodElements.capacityBar.bar.image.fillAmount = activeElements.foodElements.capacityBar.bar.image.fillAmount;
+	// 	newElements.scoreText.QuickSetValue(cachedScore);
+	// 	newElements.foodElements.sandwiches.UpdateUI(CachedCollectedSandwiches);
+	// 	newElements.foodElements.seeds.UpdateUI(CachedCollectedSeeds);
+	// 	newElements.lifeElements.UpdateUI(CachedRemainingLives);
 
-    public void DisplayEndScreen(int score)
-    {
-        m_EndScreen.SetActive(true);
-        m_FinalScore.SetValue(score);
-        Time.timeScale = 0.0f;
-    }
+	// 	activeElements = newElements;
+	// 	activeElements.container.SetActive(true);
+	// }
 
-    /// <summary>
-    /// Updates which side the joystick is on
-    /// </summary>
-    private void ApplySavedLandscapeUILayout()
-    {
-        RectTransform foodContainer = landscapeElements.foodElements.container;
-        RectTransform capacityBar = landscapeElements.foodElements.capacityBar.container;
-        RectTransform joystick = landscapeElements.joystickElements.container;
+	public void ClearFoodUI()
+	{
+		activeElements.foodElements.sandwiches.icons.ForEach(image => image.gameObject.SetActive(false));
+		activeElements.foodElements.sandwiches.overflowCounter.gameObject.SetActive(false);
+		activeElements.foodElements.seeds.icons.ForEach(image => image.gameObject.SetActive(false));
+		activeElements.foodElements.seeds.overflowCounter.gameObject.SetActive(false);
+	}
 
-        // UI is set up to be right-joystick (1) by default.
-        // Do this even if the game is in the portrait layout in case the player rotates their device.
-        if (PlayerPrefs.GetInt("JoystickPosition") == 0)
-        {
-            foodContainer.pivot = new Vector2(1, 0);
-            foodContainer.anchorMin = new Vector2(1, 0);
-            foodContainer.anchorMax = new Vector2(1, 0);
-            foodContainer.anchoredPosition = new Vector2(-40, 40);
+	public void DisplayEndScreen(int score)
+	{
+		m_EndScreen.SetActive(true);
+		m_FinalScore.SetValue(score);
+		Time.timeScale = 0.0f;
+	}
 
-            landscapeElements.foodElements.seeds.layoutGroup.childAlignment = TextAnchor.MiddleRight;
-            landscapeElements.foodElements.sandwiches.layoutGroup.childAlignment = TextAnchor.MiddleRight;
+	/// <summary>
+	/// Updates which side the joystick is on
+	/// </summary>
+	private void ApplySavedLandscapeUILayout()
+	{
+		RectTransform foodContainer = landscapeElements.foodElements.container;
+		RectTransform capacityBar = landscapeElements.foodElements.capacityBar.container;
+		RectTransform joystick = landscapeElements.joystickElements.container;
 
-            capacityBar.anchorMin = new Vector2(1, 0);
-            capacityBar.anchorMax = new Vector2(1, 0);
-            capacityBar.anchoredPosition = new Vector2(-600, 0);
+		// UI is set up to be right-joystick (1) by default.
+		// Do this even if the game is in the portrait layout in case the player rotates their device.
+		if (PlayerPrefs.GetInt("JoystickPosition") == 0)
+		{
+			foodContainer.pivot = Vector2.right;
+			foodContainer.anchorMin = Vector2.right;
+			foodContainer.anchorMax = Vector2.right;
 
-            joystick.pivot = new Vector2(0, 0);
-            joystick.anchorMin = new Vector2(0, 0);
-            joystick.anchorMax = new Vector2(0, 0);
-            joystick.anchoredPosition = new Vector2(150, 125);
-        }
-        else if (PlayerPrefs.GetInt("JoystickPosition") == 1)
-        {
-            foodContainer.pivot = new Vector2(0, 0);
-            foodContainer.anchorMin = new Vector2(0, 0);
-            foodContainer.anchorMax = new Vector2(0, 0);
-            foodContainer.anchoredPosition = new Vector2(40, 40);
+			foodContainer.anchoredPosition = new Vector2(-40, 40);
 
-            landscapeElements.foodElements.seeds.layoutGroup.childAlignment = TextAnchor.MiddleLeft;
-            landscapeElements.foodElements.sandwiches.layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+			landscapeElements.foodElements.seeds.layoutGroup.childAlignment = TextAnchor.MiddleRight;
+			landscapeElements.foodElements.sandwiches.layoutGroup.childAlignment = TextAnchor.MiddleRight;
 
-            capacityBar.anchorMin = new Vector2(0, 0);
-            capacityBar.anchorMax = new Vector2(0, 0);
-            capacityBar.anchoredPosition = new Vector2(0, 0);
+			capacityBar.anchorMin = Vector2.right;
+			capacityBar.anchorMax = Vector2.right;
+			capacityBar.anchoredPosition = new Vector2(-600, 0);
 
-            joystick.pivot = new Vector2(1, 0);
-            joystick.anchorMin = new Vector2(1, 0);
-            joystick.anchorMax = new Vector2(1, 0);
-            joystick.anchoredPosition = new Vector2(-150, 125);
-        }
-    }
+			joystick.pivot = Vector2.zero;
+			joystick.anchorMin = Vector2.zero;
+			joystick.anchorMax = Vector2.zero;
+			joystick.anchoredPosition = new Vector2(150, 125);
+		}
+		else if (PlayerPrefs.GetInt("JoystickPosition") == 1)
+		{
+			foodContainer.pivot = Vector2.zero;
+			foodContainer.anchorMin = Vector2.zero;
+			foodContainer.anchorMax = Vector2.zero;
+			foodContainer.anchoredPosition = new Vector2(40, 40);
+
+			landscapeElements.foodElements.seeds.layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+			landscapeElements.foodElements.sandwiches.layoutGroup.childAlignment = TextAnchor.MiddleLeft;
+
+			capacityBar.anchorMin = Vector2.zero;
+			capacityBar.anchorMax = Vector2.zero;
+			capacityBar.anchoredPosition = Vector2.zero;
+
+			joystick.pivot = Vector2.right;
+			joystick.anchorMin = Vector2.right;
+			joystick.anchorMax = Vector2.right;
+			joystick.anchoredPosition = new Vector2(-150, 125);
+		}
+	}
 }
