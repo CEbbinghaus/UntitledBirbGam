@@ -33,7 +33,7 @@ public class PlayerManager : MonoBehaviour
 
 	[SerializeField] ParticleSystem[] m_Particles = null;
 
-	[SerializeField] float m_DeaggroTimer = 10.0f;
+	[SerializeField] float InvulnerabilityTimer = 10.0f;
 
 	[SerializeField]
 	AudioInstance SeedPickupSound;
@@ -52,6 +52,11 @@ public class PlayerManager : MonoBehaviour
 		Spawning.RefreshSpawned();
 	}
 
+	void Update()
+	{
+		if (Input.GetButtonDown("Pause "))
+			PauseMenu.currentInstance?.TogglePause();
+	}
 
 	// For food and nest interactions
 	void OnTriggerEnter(Collider other)
@@ -95,24 +100,6 @@ public class PlayerManager : MonoBehaviour
 	// Move most of this to the bidge and frisbee scripts.
 	void OnCollisionEnter(Collision collision)
 	{
-		switch (collision.gameObject.tag)
-		{
-			case "Bidge":
-				BidgeBehaviour behaviour = collision.gameObject.GetComponent<BidgeBehaviour>();
-
-				if (behaviour.m_DeaggroTimer > 0) return;
-
-				behaviour.SetDeaggroTimer(m_DeaggroTimer);
-
-				TakeDamage();
-				break;
-			case "Frisbee":
-				if (collision.gameObject.GetComponent<FrisbeeMovement>()?.GetFired() == false)
-					return;
-				TakeDamage();
-				break;
-		}
-
 		if (!m_Particles[2].isPlaying)
 		{
 			m_Particles[1].Play();

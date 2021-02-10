@@ -12,38 +12,41 @@ public enum PauseState
 [Serializable]
 public class PauseCurve
 {
-	public KeyCode DEBUG_Key;
 	public AnimationCurve movementCurve;
 	public AnimationCurve fadeCurve;
 	public float duration;
 
 	public PauseCurve() {}
-	public PauseCurve(KeyCode _key, float _duration)
+	public PauseCurve(float _duration)
 	{
-		DEBUG_Key = _key;
 		duration = _duration;
 	}
 }
 
 public class PauseMenu : MonoBehaviour
 {
+	public static PauseMenu currentInstance;
+
 	float progress;
 	PauseState state;
+	bool paused;
+
 	float cachedXPos;
 	[SerializeField]
 	new RectTransform transform;
 	int screenHeight;
 
 	[SerializeField]
-	PauseCurve fallCurve = new PauseCurve(KeyCode.K, 2);
+	PauseCurve fallCurve = new PauseCurve(2);
 	[SerializeField]
-	PauseCurve riseCurve = new PauseCurve(KeyCode.L, 0.3f);
+	PauseCurve riseCurve = new PauseCurve(0.3f);
 
 	[SerializeField]
 	CanvasGroup pauseFade;
 
 	private void Awake()
 	{
+		currentInstance = this;
 		screenHeight = Screen.height;
 		transform = GetComponent<RectTransform>();
 		cachedXPos = transform.anchoredPosition.x;
@@ -52,13 +55,6 @@ public class PauseMenu : MonoBehaviour
 
 	private void Update()
 	{
-		#region Debug stuff
-		if (Input.GetKeyDown(fallCurve.DEBUG_Key))
-			SetFallState();
-		if (Input.GetKeyDown(riseCurve.DEBUG_Key))
-			SetRiseState();
-		#endregion
-
 		switch (state)
 		{
 			case PauseState.None:
@@ -88,8 +84,6 @@ public class PauseMenu : MonoBehaviour
 		}
 	}
 
-	public void ChangeState(int _state) => ChangeState((PauseState)_state);
-
 	void ChangeState(PauseState _state)
 	{
 		state = _state;
@@ -97,9 +91,14 @@ public class PauseMenu : MonoBehaviour
 		pauseFade.blocksRaycasts = ((int)_state - 1) == 1;
 	}
 
-	[ContextMenu("Fall")]
-	void SetFallState() => ChangeState(PauseState.Falling);
+	public void SetPaused(bool pauseState)
+	{
+		paused = pauseState;
+		ChangeState(pauseState ? PauseState.Falling : PauseState.Rising);
+	}
 
-	[ContextMenu("Rise")]
-	void SetRiseState() => ChangeState(PauseState.Rising);
+	public void TogglePause()
+	{
+		SetPaused(!paused);
+	}
 }

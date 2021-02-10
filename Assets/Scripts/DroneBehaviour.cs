@@ -124,4 +124,16 @@ public class DroneBehaviour : MonoBehaviour
 		}
 	}
 
+	private void OnCollisionEnter(Collision collision)
+	{
+		switch (collision.gameObject.tag)
+		{
+			case "Bidge":
+				collision.gameObject.GetComponent<BidgeBehaviour>().StopChasing();
+				break;
+			case "Player":
+				collision.gameObject.GetComponent<PlayerManager>().TakeDamage();
+				break;
+		}
+	}
 }
