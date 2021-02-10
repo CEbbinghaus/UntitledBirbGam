@@ -76,9 +76,9 @@ public class UICounter : MonoBehaviour
 			var divider = Duration;
 
 			if (ScaleWithAmount)
-				divider *= (Mathf.Abs(_valueTarget - _valueOrigin) / AmountPerDuration);
+				divider *= (Mathf.Abs(_valueTarget - _valueOrigin) / (float)AmountPerDuration);
 
-			time += Time.unscaledDeltaTime / divider;
+			time += Time.deltaTime / divider;
 		}
 		else
 		{
