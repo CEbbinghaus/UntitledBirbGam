@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal class Singleton<T> : MonoBehaviour where T : Object
+public class Singleton<T> : MonoBehaviour where T : Object
 {
 	private static T instance;
 
@@ -8,8 +8,8 @@ internal class Singleton<T> : MonoBehaviour where T : Object
 	{
 		if (instance == null)
 		{
-			Debug.LogWarning($"No instance of {typeof(T).Name} exists.");// Creating one instead.");
-																 //instance = new GameObject(typeof(T).Name).AddComponent(typeof(T)) as T;
+			Debug.LogWarning($"No instance of {typeof(T).Name} exists."); // Creating one instead.");
+			//instance = new GameObject(typeof(T).Name).AddComponent(typeof(T)) as T;
 		}
 
 		return instance;

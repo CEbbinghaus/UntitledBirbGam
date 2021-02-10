@@ -17,7 +17,7 @@ public class PauseCurve
 	public AnimationCurve fadeCurve;
 	public float duration;
 
-	public PauseCurve() { }
+	public PauseCurve() {}
 	public PauseCurve(KeyCode _key, float _duration)
 	{
 		DEBUG_Key = _key;
