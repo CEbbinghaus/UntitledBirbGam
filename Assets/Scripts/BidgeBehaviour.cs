@@ -45,7 +45,10 @@ public class BidgeBehaviour : MonoBehaviour
 	public float ViewCone = .05f;
 	public float ViewDistance = 10f;
 
-	public float m_DeaggroTimer = 10.0f;
+	[SerializeField]
+	float m_DeaggroTimer = 10.0f;
+
+	float currentTimer = 10.0f;
 
 	BidgeState state;
 
@@ -65,9 +68,22 @@ public class BidgeBehaviour : MonoBehaviour
 
 	public void StopChasing()
 	{
-		SetDeaggroTimer(5);
+		currentTimer = m_DeaggroTimer;
 		state = BidgeState.Wandering;
 		setRandomTarget();
+	}
+
+	void OnCollisionEnter(Collision collision)
+	{
+		if (currentTimer > 0)return;
+
+		if (collision.gameObject.tag != "Player")return;
+
+		PlayerManager player = collision.gameObject.GetComponent<PlayerManager>();
+
+		currentTimer = m_DeaggroTimer;
+
+		player.TakeDamage();
 	}
 
 	// Update is called once per frame
@@ -165,10 +181,5 @@ public class BidgeBehaviour : MonoBehaviour
 		//Go to Random Wander point if at Current Wander Point
 		if (Vector3.Distance(transform.position, m_Agent.destination) <= 2.0f)
 			setRandomTarget();
-	}
-
-	public void SetDeaggroTimer(float deaggroTimer)
-	{
-		m_DeaggroTimer = deaggroTimer;
 	}
 }

@@ -76,10 +76,15 @@ public class FrisbeeMovement : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		if (collision.transform.tag == "Bidge")
+		switch (collision.gameObject.tag)
 		{
-			BidgeBehaviour b = collision.gameObject.GetComponent<BidgeBehaviour>();
-			b.StopChasing();
+			case "Bidge":
+				collision.gameObject.GetComponent<BidgeBehaviour>().StopChasing();
+				break;
+			case "Player":
+				if (GetFired())
+					collision.gameObject.GetComponent<PlayerManager>().TakeDamage();
+				break;
 		}
 		// Clean up to make frisbee Collision look a bit better
 		rb.useGravity = true;
