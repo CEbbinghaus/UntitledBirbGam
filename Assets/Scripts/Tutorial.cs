@@ -7,6 +7,9 @@ public class Tutorial : MonoBehaviour
 	Camera m_TutorialCamera;
 
 	[SerializeField]
+	GameObject m_MainCameraObject;
+
+	[SerializeField]
 	Transform[] m_CameraPositions = new Transform[0];
 
 	private string[] m_TextPrompts = new string[]
@@ -44,6 +47,7 @@ public class Tutorial : MonoBehaviour
 	{
 		if (m_TutorialCamera == null)
 			m_TutorialCamera = GetComponent<Camera>();
+		m_MainCameraObject = Camera.main.gameObject;
 	}
 
 	private void Start()
@@ -51,6 +55,7 @@ public class Tutorial : MonoBehaviour
 		Time.timeScale = 0;
 		m_TextPromptDisplay.text = m_TextPrompts[0];
 		m_MainCanvasGroup.alpha = 0;
+		m_MainCameraObject.SetActive(false);
 	}
 
 	private void Update()
@@ -67,6 +72,7 @@ public class Tutorial : MonoBehaviour
 					m_InTutorial = false;
 					m_TutorialCamera.enabled = false;
 					m_MainCanvasGroup.alpha = 1;
+					m_MainCameraObject.SetActive(true);
 					return;
 				}
 			}
