@@ -12,7 +12,7 @@ public abstract class ControllerButton : EventTrigger
 	[HideInInspector]
 	public TextMeshProUGUI buttonText;
 
-	private void Awake()
+	private void Start()
 	{
 		button = GetComponent<Button>();
 		button.targetGraphic.color = button.colors.normalColor;

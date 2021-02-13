@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+	public enum InputType
+	{
+		KBM,
+		Controller,
+		Touch
+	}
+
 	[Serializable] public class UIElements
 	{
 		[Serializable] public class LifeElements
@@ -108,6 +116,8 @@ public class UIManager : MonoBehaviour
 	public int CachedCollectedSandwiches { get => cachedCollectedSandwiches; set { activeElements.foodElements.sandwiches.UpdateUI(value); cachedCollectedSandwiches = value; } }
 	public int CachedRemainingLives { get => cachedRemainingLives; set { activeElements.lifeElements.UpdateUI(value); cachedRemainingLives = value; } }
 
+	public InputType inputType;
+
 	private void Awake()
 	{
 		// Singleton
@@ -126,13 +136,19 @@ public class UIManager : MonoBehaviour
 			Debug.LogError("No player found!");
 		}
 
+		inputType =
+			Input.touchSupported ? InputType.Touch :
+			Input.GetJoystickNames().ToList().All(e => !string.IsNullOrEmpty(e)) ? InputType.Controller :
+			InputType.KBM;
+		Debug.Log($"Assumed input: {inputType}");
+
 		//OrientationManager.onChangeUIOrientation += UpdateOrientation;
 	}
 
 	// Start is called before the first frame update
 	private void Start()
 	{
-		if (Input.touchSupported)
+		if (inputType == InputType.Touch)
 		{
 			// Update the horizontal UI
 			ApplySavedLandscapeUILayout();
@@ -140,28 +156,30 @@ public class UIManager : MonoBehaviour
 			landscapeElements.pauseIcon.gameObject.SetActive(true);
 			portraitElements.pauseIcon.gameObject.SetActive(true);
 
-			// Set the UI Layout
-			// 	switch (Screen.orientation)
-			// 	//switch (DEBUGOrientation)
-			// 	{
-			// 		case ScreenOrientation.Portrait:
-			// 			activeElements = portraitElements;
-			// 			UpdateOrientation(ScreenOrientation.Portrait);
-			// 			landscapeElements.container.SetActive(false);
-			// 			break;
-			// 		case ScreenOrientation.LandscapeLeft:
-			// 		case ScreenOrientation.LandscapeRight:
+			//// Set the UI Layout
+			//switch (Screen.orientation)
+			//{
+			//	case ScreenOrientation.Portrait:
+			//		activeElements = portraitElements;
+			//		UpdateOrientation(ScreenOrientation.Portrait);
+			//		landscapeElements.container.SetActive(false);
+			//		break;
+			//	case ScreenOrientation.LandscapeLeft:
+			//	case ScreenOrientation.LandscapeRight:
+			//		activeElements = landscapeElements;
+			//		portraitElements.container.SetActive(false);
+			//		UpdateOrientation(ScreenOrientation.Landscape);
+			//		break;
+			//	default:
+			//		// Treat the game as if it is in landscape mode by default
+			//		goto case ScreenOrientation.LandscapeRight;
+			//}
+		}
+		else
+		{
 			activeElements = landscapeElements;
 			portraitElements.container.SetActive(false);
-			// 			UpdateOrientation(ScreenOrientation.Landscape);
-			// 			break;
-			// 		default:
-			// 			// Treat the game as if it is in landscape mode by default
-			// 			goto case ScreenOrientation.LandscapeRight;
-			// 	}
 		}
-		activeElements = landscapeElements;
-		portraitElements.container.SetActive(false);
 	}
 
 	// public void UpdateOrientation(ScreenOrientation orientation)

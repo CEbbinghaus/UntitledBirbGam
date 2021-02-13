@@ -55,6 +55,8 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField]
 	bl_Joystick joystick;
 
+	bool useJoystick;
+
 	void Awake()
 	{
 		// Get the rigidbody.
@@ -68,11 +70,16 @@ public class PlayerMovement : MonoBehaviour
 		OrientationManager.onChangeUIOrientation += UpdateActiveJoystick;
 	}
 
+	private void Start()
+	{
+		useJoystick = UIManager.instance.inputType == UIManager.InputType.Touch;
+	}
+
 	void Update()
 	{
 		Vector3 playerDir = Vector3.forward;
 
-		if (joystick != null && Application.isMobilePlatform)
+		if (joystick != null && useJoystick)
 			playerDir = new Vector3(joystick.Horizontal, 0, joystick.Vertical).normalized;
 		else
 			playerDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;

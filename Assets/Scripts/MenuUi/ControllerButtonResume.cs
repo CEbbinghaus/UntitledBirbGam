@@ -7,6 +7,6 @@ public class ControllerButtonResume : ControllerButton
 	public override void Press()
 	{
 		base.Press();
-		PauseMenu.currentInstance.SetPause(false);
+		PauseMenu.currentInstance.SetPaused(false);
 	}
 }

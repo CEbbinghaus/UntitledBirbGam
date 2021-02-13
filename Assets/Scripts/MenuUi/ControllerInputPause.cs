@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ControllerInputPause : MonoBehaviour
 {
+    public static ControllerInputPause instance;
     public MenuState menuState = MenuState.Null;
-    [NonSerialized] public UIPanElement activeSubMenu;
     public float holdDelay = 0.5f;
     public float sensitivity = 0.5f;
     float timer = 0;
     List<ControllerButton> menuButtons = new List<ControllerButton>();
     int currentIndex = -1;
+    ControllerButtonPauseOptions options;
 
     private void Start()
     {
@@ -24,6 +26,8 @@ public class ControllerInputPause : MonoBehaviour
                 button.index = setIndex;
                 menuButtons.Add(button);
                 setIndex++;
+                if (button is ControllerButtonPauseOptions)
+                    options = button as ControllerButtonPauseOptions;
             }
         }
     }
@@ -86,7 +90,7 @@ public class ControllerInputPause : MonoBehaviour
             case MenuState.SubMenu:
                 if (Input.GetButtonUp("Cancel"))
                 {
-                    ExitSubMenu();
+                    ExitOptionsMenu();
                 }
                 break;
         }
@@ -133,10 +137,9 @@ public class ControllerInputPause : MonoBehaviour
         }
     }
 
-    public void ExitSubMenu()
+    public void ExitOptionsMenu()
     {
-        UIPan.instance.ChangeState(activeSubMenu, UIPanState.MovingOffscreen);
-        activeSubMenu = null;
+        UIPan.instance.ChangeState(options.optionsElement, UIPanState.MovingOffscreen);
         SetSelectedButton(currentIndex);
         menuState = MenuState.Menu;
     }

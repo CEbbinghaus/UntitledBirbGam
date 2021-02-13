@@ -9,7 +9,7 @@ public class CapacityBar : MonoBehaviour
 	void Start()
 	{
 		if (image == null)
-			image = GetComponentInChildren<Image>();
+			image = transform.GetChild(0).GetComponent<Image>();
 
 		playerManager = FindObjectOfType<PlayerManager>();
 

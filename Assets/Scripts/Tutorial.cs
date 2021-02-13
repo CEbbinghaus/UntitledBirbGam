@@ -12,7 +12,7 @@ public class Tutorial : MonoBehaviour
 	[SerializeField]
 	Transform[] m_CameraPositions = new Transform[0];
 
-	private string[] m_TextPrompts = new string[]
+	private readonly string[] m_TextPrompts = new string[]
 	{
 		"Collect Food!",
 		"Deliver it to your nest for points!",
@@ -38,10 +38,10 @@ public class Tutorial : MonoBehaviour
 	float FadeOutSpeed = .5f;
 
 	[SerializeField]
-	CanvasGroup m_MainCanvasGroup;
+	CanvasGroup m_MainCanvasGroup = null;
 
 	[SerializeField]
-	CanvasGroup m_TutorialCanvasGroup;
+	CanvasGroup m_TutorialCanvasGroup = null;
 
 	void Awake()
 	{

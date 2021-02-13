@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 public enum PauseState
 {
@@ -16,7 +15,7 @@ public class PauseCurve
 	public AnimationCurve fadeCurve;
 	public float duration;
 
-	public PauseCurve() {}
+	public PauseCurve() { }
 	public PauseCurve(float _duration)
 	{
 		duration = _duration;

@@ -13,7 +13,6 @@ public enum MenuState
 public class ControllerInputMenu : MonoBehaviour
 {
     public static ControllerInputMenu instance;
-    //public ScreenOrientation DEBUGOrientation;
     public MenuState menuState = MenuState.Menu;
     [NonSerialized] public UIPanElement activeSubMenu;
     public float holdDelay = 0.5f;
@@ -25,7 +24,6 @@ public class ControllerInputMenu : MonoBehaviour
     List<ControllerButton> menuButtonsPortrait = new List<ControllerButton>();
     List<ControllerButton> activeMenuButtons = new List<ControllerButton>();
     int currentIndex = -1;
-    ScreenOrientation cachedOrientation;
 
     private void Awake()
     {
@@ -137,7 +135,6 @@ public class ControllerInputMenu : MonoBehaviour
         switch (screenOrientation)
         {
             case ScreenOrientation.Portrait:
-                cachedOrientation = ScreenOrientation.Portrait;
                 activeMenuButtons = menuButtonsPortrait;
                 if (activeSubMenu == UIPan.instance.creditsLandscape)
                     activeSubMenu = UIPan.instance.creditsPortrait;
@@ -146,7 +143,6 @@ public class ControllerInputMenu : MonoBehaviour
                 break;
             case ScreenOrientation.LandscapeLeft:
             case ScreenOrientation.LandscapeRight:
-                cachedOrientation = ScreenOrientation.Landscape;
                 activeMenuButtons = menuButtonsLandscape;
                 if (activeSubMenu == UIPan.instance.creditsPortrait)
                     activeSubMenu = UIPan.instance.creditsLandscape;
