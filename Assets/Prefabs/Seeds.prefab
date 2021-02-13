@@ -62,6 +62,7 @@ MonoBehaviour:
   bobHeight: 0.5
   bobSpeed: 1.4
   rotationSpeed: 5
+  ForcedSpawn: 0
 --- !u!1 &3003706935283620291
 GameObject:
   m_ObjectHideFlags: 0

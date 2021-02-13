@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class ControllerButtonPauseOptions : ControllerButton
 {
-	private void Start()
+	protected override void Start()
 	{
+		base.Start();
 		optionsElement.cachedLocation = optionsElement.transform.anchoredPosition;
 		optionsElement.transform.anchoredPosition = new Vector2(0, Screen.height);
 	}

@@ -52,12 +52,6 @@ public class PlayerManager : MonoBehaviour
 		Spawning.RefreshSpawned();
 	}
 
-	void Update()
-	{
-		if (Input.GetButtonDown("Pause "))
-			PauseMenu.currentInstance?.TogglePause();
-	}
-
 	// For food and nest interactions
 	void OnTriggerEnter(Collider other)
 	{

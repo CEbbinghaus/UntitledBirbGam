@@ -9,15 +9,18 @@ public abstract class ControllerButton : EventTrigger
 	public int index;
 	[HideInInspector]
 	public Button button;
-	[HideInInspector]
+	//[HideInInspector]
 	public TextMeshProUGUI buttonText;
 
-	private void Start()
+	ControllerMenuInputGeneric controller;
+
+	protected virtual void Start()
 	{
 		button = GetComponent<Button>();
 		button.targetGraphic.color = button.colors.normalColor;
 		button.onClick.AddListener(Press);
 		buttonText = GetComponentInChildren<TextMeshProUGUI>();
+		controller = FindObjectOfType<ControllerMenuInputGeneric>();
 	}
 
 	public virtual void Press()
@@ -29,19 +32,19 @@ public abstract class ControllerButton : EventTrigger
 
 	public override void OnPointerEnter(PointerEventData eventData)
 	{
-		if (ControllerInputMenu.instance.menuState == MenuState.Menu)
+		if (controller.menuState == MenuState.Menu)
 		{
 			base.OnPointerEnter(eventData);
-			ControllerInputMenu.instance.SetSelectedButton(this);
+			controller.SetSelectedButton(this);
 		}
 	}
 
 	public override void OnPointerExit(PointerEventData eventData)
 	{
-		if (ControllerInputMenu.instance.menuState == MenuState.Menu)
+		if (controller.menuState == MenuState.Menu)
 		{
 			base.OnPointerExit(eventData);
-			ControllerInputMenu.instance.CancelControllerInput(this);
+			controller.CancelControllerInput(this);
 		}
 	}
 }

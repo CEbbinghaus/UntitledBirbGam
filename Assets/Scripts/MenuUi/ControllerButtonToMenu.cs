@@ -31,6 +31,5 @@ public class ControllerButtonToMenu : ControllerButton
 		base.Press();
 		Time.timeScale = 1;
 		StartCoroutine(FadeOut(1f, canvasGroup.alpha, 1));
-		ControllerInputMenu.instance.menuState = MenuState.Null;
 	}
 }

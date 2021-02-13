@@ -69,6 +69,7 @@ public class Tutorial : MonoBehaviour
 				if (m_CurrentIndex == m_CameraPositions.Length)
 				{
 					Time.timeScale = 1;
+					ControllerInputPause.instance.canPause = true;
 					m_InTutorial = false;
 					m_TutorialCamera.enabled = false;
 					m_MainCanvasGroup.alpha = 1;

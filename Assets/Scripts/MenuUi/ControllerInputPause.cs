@@ -4,27 +4,77 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ControllerInputPause : MonoBehaviour
+public enum PauseState
+{
+    None,
+    Rising,
+    Falling
+}
+
+[Serializable]
+public class PauseCurve
+{
+    public AnimationCurve movementCurve;
+    public AnimationCurve fadeCurve;
+    public float duration;
+
+    public PauseCurve() { }
+    public PauseCurve(float _duration)
+    {
+        duration = _duration;
+    }
+}
+
+
+public class ControllerInputPause : ControllerMenuInputGeneric
 {
     public static ControllerInputPause instance;
-    public MenuState menuState = MenuState.Null;
-    public float holdDelay = 0.5f;
-    public float sensitivity = 0.5f;
-    float timer = 0;
-    List<ControllerButton> menuButtons = new List<ControllerButton>();
-    int currentIndex = -1;
+
+    float progress;
+    PauseState pauseState;
+    bool paused;
+
+    float cachedXPos;
+    [SerializeField]
+    new RectTransform transform;
+    int screenHeight;
+
+    [SerializeField]
+    PauseCurve fallCurve = new PauseCurve(2);
+    [SerializeField]
+    PauseCurve riseCurve = new PauseCurve(0.3f);
+
+    [SerializeField]
+    CanvasGroup pauseFade;
+
+    public Transform pauseMenuButtonsContainer;
     ControllerButtonPauseOptions options;
+    public bool canPause;
+
+    ControllerInputPause()
+    {
+        menuState = MenuState.Null;
+    }
+
+    private void Awake()
+    {
+        instance = this;
+        screenHeight = Screen.height;
+        transform = GetComponent<RectTransform>();
+        cachedXPos = transform.anchoredPosition.x;
+        transform.anchoredPosition = new Vector2(cachedXPos, screenHeight);
+    }
 
     private void Start()
     {
         int setIndex = 0;
-        foreach (Transform child in transform)
+        foreach (Transform child in pauseMenuButtonsContainer)
         {
             ControllerButton button = child.GetComponent<ControllerButton>();
             if (button)
             {
                 button.index = setIndex;
-                menuButtons.Add(button);
+                activeMenuButtons.Add(button);
                 setIndex++;
                 if (button is ControllerButtonPauseOptions)
                     options = button as ControllerButtonPauseOptions;
@@ -32,114 +82,66 @@ public class ControllerInputPause : MonoBehaviour
         }
     }
 
-    void Update()
+    protected override void Update()
     {
-        switch (menuState)
+        if (Input.GetButtonDown("Pause") && canPause)
+            TogglePause();
+
+        switch (pauseState)
         {
-            case MenuState.Menu:
-                #region Menu
-                // -1 index is if mouse is currently being used
-                if (Input.GetMouseButtonDown(0))
-                {
-                    CancelControllerInput(null);
-                }
-
-                // Pressing the button
-                if (Input.GetButtonDown("Submit"))
-                {
-                    if (currentIndex >= 0)
-                    {
-                        menuButtons[currentIndex].Press();
-                    }
-                    else
-                    {
-                        SetSelectedButton(0);
-                    }
-                }
-
-                // Joystick is at rest, reset the timer
-                if (Input.GetAxis("Vertical") <= 0.5 && Input.GetAxis("Vertical") >= -0.5)
-                {
-                    timer = 0;
-                }
-
-                // Changing selected button if the joystick was previously at rest
-                if (timer == 0)
-                {
-                    // Move Up
-                    if (Input.GetAxis("Vertical") > sensitivity)
-                    {
-                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count - 1) % menuButtons.Count);
-                        return;
-                    }
-
-                    // Move down
-                    if (Input.GetAxis("Vertical") < -sensitivity)
-                    {
-                        SetSelectedButton(currentIndex == -1 ? 0 : (currentIndex + menuButtons.Count + 1) % menuButtons.Count);
-                        return;
-                    }
-                }
-
-                if (timer > 0)
-                {
-                    timer = Mathf.Max(0, timer -= Time.deltaTime);
-                }
+            case PauseState.None:
                 break;
-            #endregion
-            case MenuState.SubMenu:
-                if (Input.GetButtonUp("Cancel"))
-                {
-                    ExitOptionsMenu();
-                }
+            case PauseState.Rising:
+                SetPosition(riseCurve);
                 break;
+            case PauseState.Falling:
+                SetPosition(fallCurve);
+                break;
+        }
+
+        base.Update();
+    }
+
+    void SetPosition(PauseCurve pauseCurve)
+    {
+        // Calculate how far into the curve we are
+        progress = Mathf.Clamp(progress + (Time.unscaledDeltaTime / pauseCurve.duration), 0, 1);
+        // Set the position
+        transform.anchoredPosition = new Vector3(cachedXPos, pauseCurve.movementCurve.Evaluate(progress) * screenHeight);
+        pauseFade.alpha = pauseCurve.fadeCurve.Evaluate(progress);
+        Time.timeScale = pauseCurve.fadeCurve.Evaluate(1 - progress);
+        // Stop if at completion
+        if (progress == 1)
+        {
+            progress = 0;
+            pauseState = PauseState.None;
+            menuState = pauseCurve == fallCurve ? MenuState.Menu : MenuState.Null;
         }
     }
 
-    public void SetSelectedButton(int index)
+    void ChangeState(PauseState _state)
     {
-        // No button previously selected, nothing to reset.
+        pauseState = _state;
+        progress = 0;
+        pauseFade.blocksRaycasts = ((int)_state - 1) == 1;
+    }
+
+    public void SetPaused(bool pauseState)
+    {
+        paused = pauseState;
+        ChangeState(pauseState ? PauseState.Falling : PauseState.Rising);
         if (currentIndex != -1)
-            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
-
-        currentIndex = index;
-        // If the player is using a mouse, don't set a selected button
-        if (currentIndex == -1) return;
-
-        menuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
-
-        menuButtons[currentIndex].button.Select();
-        timer = holdDelay;
+            CancelControllerInput(activeMenuButtons[currentIndex]);
     }
 
-    public void SetSelectedButton(ControllerButton button)
+    public void TogglePause()
     {
-        // No button previously selected, nothing to reset.
-        if (currentIndex != -1)
-            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
-
-        currentIndex = button.index;
-        menuButtons[currentIndex].buttonText.fontMaterial.EnableKeyword("GLOW_ON");
-        menuButtons[currentIndex].button.Select();
-        timer = holdDelay;
+        SetPaused(!paused);
     }
 
-    public void CancelControllerInput(ControllerButton button)
-    {
-        // Already not using controller, return
-        if (currentIndex == -1) return;
-
-        if (button == null || currentIndex == button.index)
-        {
-            menuButtons[currentIndex].buttonText.fontMaterial.DisableKeyword("GLOW_ON");
-            EventSystem.current.SetSelectedGameObject(null);
-            currentIndex = -1;
-        }
-    }
-
-    public void ExitOptionsMenu()
-    {
-        UIPan.instance.ChangeState(options.optionsElement, UIPanState.MovingOffscreen);
+    public override void ExitSubMenu() {
+        options.optionsElement.state = UIPanState.MovingOffscreen;
+        activeSubMenu = null;
         SetSelectedButton(currentIndex);
         menuState = MenuState.Menu;
     }
