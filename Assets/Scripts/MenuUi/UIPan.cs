@@ -18,11 +18,14 @@ public class UIPanElement
 	public AnimationCurve movementCurveYOnscreen;
 	public AnimationCurve movementCurveXOffscreen;
 	public AnimationCurve movementCurveYOffscreen;
+	public CanvasGroup fade;
 	public AnimationCurve fadeCurve;
 	public float duration = 0.3f;
+	public bool alterTimescale;
 	[NonSerialized]	public float progress;
 	[NonSerialized]	public Vector2 cachedLocation;
 	[NonSerialized]	public UIPanState state;
+	[NonSerialized] public bool doFade;
 }
 public class UIPan : MonoBehaviour
 {
@@ -116,7 +119,7 @@ public class UIPan : MonoBehaviour
 				goto case ScreenOrientation.LandscapeRight;
 		}
 		// Force the menus into the correct locations
-		UIPanElement submenu = ControllerInputMenu.instance.activeSubMenu;
+		UIPanElement submenu = new UIPanElement();
 		if (submenu == null) return;
 
 		if (activeCredits != submenu)
@@ -157,11 +160,5 @@ public class UIPan : MonoBehaviour
 			element.state = UIPanState.None;
 		}
 
-	}
-
-	public void ChangeState(UIPanElement element, UIPanState _state)
-	{
-		element.state = _state;
-		element.progress = 0;
 	}
 }

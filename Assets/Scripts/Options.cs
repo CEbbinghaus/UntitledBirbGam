@@ -42,7 +42,8 @@ public class Options : MonoBehaviour
 	/// <param name="side"></param>
 	public void SetJoystickSide(int side)
 	{
-		if (side == Mathf.Abs(PlayerPrefs.GetInt("JoystickPosition") - 1))
+		int joystickSide = PlayerPrefs.GetInt("JoystickPosition");
+		if (side == Mathf.Abs( - 1))
 		{
 			if (side == 0)
 			{
